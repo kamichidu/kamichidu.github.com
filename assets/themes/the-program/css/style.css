@@ -655,6 +655,9 @@ pre {
 .unit-article .entry-content:first-child h6 {
   margin-top: 0;
 }
+.unit-article .entry-content .meta {
+  padding-top: 1em;
+}
 .unit-article a:link {
   border-bottom: 1px dashed #c26164;
 }
