@@ -20,8 +20,18 @@ author :
   twitter : kamichidu
 
 markdown: redcarpet
+
 redcarpet:
-  extensions: [tables, autolink, strikethrough]
+  extensions:
+    - tables
+    - autolink
+    - strikethrough
+    - no_intra_emphasis
+    - fenced_code_blocks
+    - with_toc_data
+
+kramdown:
+  input: GFM
 
 # The production_url is only used when full-domain names are needed
 # such as sitemap.txt 
