@@ -170,14 +170,14 @@ Lists from [HTML5 Boilerplate](http://j.mp/rP0wmY)
 
 No styleguide reference.
 */
-ul,
-ol {
-  margin: 0;
-  padding: 0 0 0 40px;
-}
-dd {
-  margin: 0 0 0 40px;
-}
+/* ul, */
+/* ol { */
+/*   margin: 0; */
+/*   padding: 0 0 0 40px; */
+/* } */
+/* dd { */
+/*   margin: 0 0 0 40px; */
+/* } */
 nav ul,
 nav ol {
   list-style: none;
@@ -475,14 +475,14 @@ h4,
   margin-top: 26px;
   margin-bottom: 26px;
 }
-p,
-ul,
-ol,
-dl,
-img {
-  margin-top: 0;
-  margin-bottom: 1.625em;
-}
+/* p, */
+/* ul, */
+/* ol, */
+/* dl, */
+/* img { */
+/*   margin-top: 0; */
+/*   margin-bottom: 1.625em; */
+/* } */
 small,
 .small,
 aside {
@@ -702,11 +702,11 @@ pre {
   margin-left: 0;
   margin-right: 0;
 }
-.unit-article ul,
-.unit-article ol,
-.unit-article dl {
-  padding-left: 0;
-}
+/* .unit-article ul, */
+/* .unit-article ol, */
+/* .unit-article dl { */
+/*   padding-left: 0; */
+/* } */
 .unit-article ul {
   list-style: square;
 }
@@ -731,15 +731,15 @@ pre {
 .unit-article li p,
 .unit-article dt p,
 .unit-article dd p,
-.unit-article li ul,
-.unit-article dt ul,
-.unit-article dd ul,
-.unit-article li ol,
-.unit-article dt ol,
-.unit-article dd ol,
-.unit-article li dl,
-.unit-article dt dl,
-.unit-article dd dl,
+/* .unit-article li ul, */
+/* .unit-article dt ul, */
+/* .unit-article dd ul, */
+/* .unit-article li ol, */
+/* .unit-article dt ol, */
+/* .unit-article dd ol, */
+/* .unit-article li dl, */
+/* .unit-article dt dl, */
+/* .unit-article dd dl, */
 .unit-article li blockquote,
 .unit-article dt blockquote,
 .unit-article dd blockquote,
