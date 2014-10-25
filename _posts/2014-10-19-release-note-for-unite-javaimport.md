@@ -2,7 +2,7 @@
 layout: post
 title: unite-javaimportがメジャーバージョンアップしました
 category: Announcement
-tags: [Vim Java]
+tags: [Vim, Java]
 ---
 {% include JB/setup %}
 

@@ -2,7 +2,7 @@
 layout: post
 title: watchdogsを使ってjavaのシンタックスチェックを非同期に行う
 category: Tips
-tags: [Vim Java]
+tags: [Vim, Java]
 ---
 {% include JB/setup %}
 

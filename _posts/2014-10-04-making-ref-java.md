@@ -2,7 +2,7 @@
 layout: post
 title: ref-javaというref-sourceを作っています
 category: Development
-tags: [Vim Java]
+tags: [Vim, Java]
 ---
 {% include JB/setup %}
 
