@@ -22,8 +22,8 @@ let g:quickrun_config['watchdogs_checker/javac']= {
 \   'cmdopt': join([
 \       '-Xlint:all',
 \       '-d $TEMP',
-\       '-sourcepath "%{javaclasspath#get().source_path()}"',
-\       '-classpath "%{javaclasspath#get().classpath()}"',
+\       '-sourcepath "%{javaclasspath#source_path()}"',
+\       '-classpath "%{javaclasspath#classpath()}"',
 \       '-deprecation',
 \   ]),
 \   'exec': '%c %o %S',
