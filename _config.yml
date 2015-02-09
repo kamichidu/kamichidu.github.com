@@ -98,7 +98,7 @@ JB :
   comments :
     provider : disqus
     disqus :
-      short_name : jekyllbootstrap
+      short_name : naruhaya
     livefyre :
       site_id : 123
     intensedebate :
