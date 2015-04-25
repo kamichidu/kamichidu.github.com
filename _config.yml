@@ -28,7 +28,11 @@ redcarpet:
     - strikethrough
     - no_intra_emphasis
     - fenced_code_blocks
+    - gh_blockcode
+    - disable_indented_code_blocks
     - with_toc_data
+    - footnotes
+    - xhtml
 
 kramdown:
   input: GFM
