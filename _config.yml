@@ -8,10 +8,7 @@ highlighter: pygments
 # Themes are encouraged to use these universal variables 
 # so be sure to set them if your theme uses them.
 #
-title : |
-  なるはやで<br>
-  いい感じの<br>
-  動作確認<br>
+title : なるはやで いい感じの 動作確認
 tagline: Site Tagline
 author :
   name : kamichidu
