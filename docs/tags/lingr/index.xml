@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lingr on なるはやで いい感じの 動作確認</title>
+    <link>http://kamichidu.github.com/tags/lingr/</link>
+    <description>Recent content in Lingr on なるはやで いい感じの 動作確認</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Wed, 09 Dec 2015 00:00:00 +0900</lastBuildDate>
+    <atom:link href="http://kamichidu.github.com/tags/lingr/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>ProjectLをPlay storeで公開しました</title>
+      <link>http://kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store/</link>
+      <pubDate>Wed, 09 Dec 2015 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store/</guid>
+      <description>&lt;p&gt;以前から開発していたAndroid用Lingr Clientである&amp;rdquo;ProjectL&amp;rdquo;を、先日Play storeで公開しました。
+&lt;a href=&#34;https://play.google.com/store/apps/details?id=akechi.projectl&#34;&gt;こちら&lt;/a&gt;からどうぞ。
+開発版は&lt;a href=&#34;https://dply.me/epmlks&#34;&gt;deploygateから配布をしていました&lt;/a&gt;が、今回正式にPlay storeに登録しましたので、今後導入が楽になるかと思います。&lt;/p&gt;
+
+&lt;p&gt;現在のバージョンは0.0.0。
+搭載機能は以下:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;過去ログ閲覧機能&lt;/p&gt;
+
+&lt;p&gt;ないと困るやつ。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;画像のインライン展開機能&lt;/p&gt;
+
+&lt;p&gt;設定画面から有効化する必要があります。
+Web版のLingrのように、画像がポストされると自動で展開します。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;通知機能&lt;/p&gt;
+
+&lt;p&gt;設定画面から正規表現を登録しておく必要があります。
+登録した正規表現にマッチするメッセージが購読している部屋にポストされた段階で通知が来ます。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;10部屋制限突破機能&lt;/p&gt;
+
+&lt;p&gt;設定画面から部屋IDの一覧を登録しておく必要があります。
+表示される部屋一覧が、設定画面で登録したものになり、Lingrの10部屋制限を突破することができます。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;(隠し機能)&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;他細かい機能はありますが、記載は省略します。
+どうぞみなさん使ってみてください。
+改善要望やバグ報告は、githubのissuesで管理していますので、&lt;a href=&#34;https://github.com/akechi/project-l/issues&#34;&gt;こちら&lt;/a&gt;からお願いします。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;少し寂しいので、開発の経緯を書こうと思います。&lt;/p&gt;
+
+&lt;p&gt;私はもともとkanno_kannoさんが開発されたLingrPocketのユーザでした。
+ですがある日、LingrPocketがPlay storeから削除されていました。
+LingrPocket自体はまだ私の端末上にありましたが、今後端末を変更したりした際にインストールできないなと思い、DIYの精神で開発を始めました。&lt;/p&gt;
+
+&lt;p&gt;テストに協力していただいた方々にはとても感謝しています。
+またTukushiGamoさんにはアイコンも作っていただいているので、足を向けて眠れないなという感じです。&lt;/p&gt;
+
+&lt;p&gt;LingrPocketは現在Play storeに復活していますが、kanno_kannoさん自身今後アップデートする予定はないということです。
+LingrPocketには今まで非常にお世話になったので、Play storeに復活したこと自体がとても嬉しいです。&lt;/p&gt;
+
+&lt;p&gt;ProjectLの今後のロードマップは予定は未定状態ですが、現在要望もらっている機能は一通り実装しようかと思っています。
+今後のこと考えると、ソースコードの整理も急ぎ目でやらないといけないのですが、仕事とプライベートが急がしくあまり開発の時間を取れておりません。
+おいおい色々やっていこうと思います。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

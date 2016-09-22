@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Vimの正規表現を切り刻む &middot; なるはやで いい感じの 動作確認</title>
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <!--[if lt IE 9]>
+    <script src="http://kamichidu.github.com//js/html5.js"></script>
+    <![endif]-->
+
+    <link href="http://kamichidu.github.com//index.xml" rel="alternate" type="application/rss+xml" title="なるはやで いい感じの 動作確認" />
+
+    <link rel='stylesheet' id='twentyfourteen-lato-css'  href='//fonts.googleapis.com/css?family=Lato%3A300%2C400%2C700%2C900%2C300italic%2C400italic%2C700italic&#038;subset=latin%2Clatin-ext' type='text/css' media='all' />
+
+    <link rel='stylesheet' id='genericons-css' href='http://kamichidu.github.com//genericons/genericons.css' type='text/css' media='all' />
+    <link rel='stylesheet' id='twentyfourteen-style-css' href='http://kamichidu.github.com//css/style.css' type='text/css' media='all' />
+    
+    <script type='text/javascript' src='http://kamichidu.github.com//js/jquery/jquery.js'></script>
+    <script type='text/javascript' src='http://kamichidu.github.com//js/jquery/jquery-migrate.min.js'></script>
+    <style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+
+    <link rel="stylesheet" href="http://kamichidu.github.com//css/custom.css">
+    
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-71082560-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+</head>
+
+<body class="home blog masthead-fixed list-view full-width grid">
+<div id="page" class="hfeed site">
+    <header id="masthead" class="site-header" role="banner">
+        <div class="header-main">
+            <h1 class="site-title"><a href="http://kamichidu.github.com//index.html" rel="home">なるはやで いい感じの 動作確認</a></h1>
+        </div>
+    </header>
+
+    <div id="main" class="site-main">
+
+
+<div id="main-content" class="main-content">
+
+	<div id="primary" class="content-area">
+		<div id="content" class="site-content" role="main">
+
+			<article class="post type-post status-publish format-standard hentry">
+
+    
+    <header class="entry-header">
+
+    
+
+        <div class="entry-meta">
+            <span class="cat-links">
+                
+                <a href="http://kamichidu.github.com//categories/tips/index.html" rel="category">Tips</a>
+                
+            </span>
+        </div>
+
+        <h1 class="entry-title">Vimの正規表現を切り刻む</h1>
+
+        <div class="entry-meta">
+            <span class="entry-date">
+                <a href="http://kamichidu.github.com/post/2014/12/20-parse-vim-regex//index.html" rel="bookmark">
+                    <time class="entry-date" datetime="2014-12-20 00:00:00 &#43;0900 JST">
+                        2014 Dec 20
+                    </time>
+                </a>
+            </span>
+        </div>
+
+    </header>
+
+    <div class="entry-content">
+        
+
+<p>この記事はVim Advent Calendar 2014の20日目の記事です。</p>
+
+<p>19日目はthleapさんによる<a href="http://chroma.hatenablog.com/entry/2014/12/19/224359">マークアップや文章の編集をちょっと楽にする</a>でした。</p>
+
+<h2 id="導入">導入</h2>
+
+<p>みなさん、正規表現、使ってますか？
+私は毎日使っています。
+特にVimの正規表現、かなり変態で良さがありますよね。</p>
+
+<p>ところでPerlには、<a href="https://metacpan.org/pod/Regexp::Assemble">Regexp::Assemble</a>という非常に便利なモジュールがあります。
+この子は何をする子かというと、自動で最適化された正規表現を生成してくれます。
+正規表現のマッチングでは、うまくトライ木を作ることができれば、かなりマッチング速度が向上しますので、自動でそれをやってくれるモジュールと言えばわかりやすいでしょうか。
+(いわゆるtrie optimization)</p>
+
+<p>例えば、&rdquo;public&rdquo;、&rdquo;protected&rdquo;、&rdquo;private&rdquo;という3つの単語についてマッチする正規表現は、
+純粋に<code>public|protected|private</code>と書けば良いのですが、これだと遅いので<code>(?:p(?:ublic|r(?:otected|ivate)))</code>と書いたほうが速いので、こう書きましょうよってことです。</p>
+
+<p>ここから本題。
+Regexp::Assembleのように、自動で正規表現を最適化するためには、まず正規表現を切り刻まなければなりません。
+この記事では、正規表現を切り刻んで遊んでみることにします。</p>
+
+<h2 id="下準備">下準備</h2>
+
+<p>正規表現を切り刻む、Vim scriptコードを用意します。
+以下を手元で実行し、<code>RegexpTokenize</code>コマンドを使えるようにしてください。</p>
+
+<p>(簡単のため、一部の正規表現にしか対応させてません。)</p>
+
+<pre><code class="language-vim">function! s:tokenize(expr)
+    let [chars, i]= [split(a:expr, '\zs'), 0]
+    let tokens= []
+    while i &lt; len(chars)
+        let ch= chars[i]
+
+        if ch ==# '\'
+            if !(i &lt; len(chars))
+                break
+            endif
+
+            let i+= 1
+            let ch= chars[i]
+
+            if ch ==# '+'
+                let tokens+= ['\+']
+            elseif ch ==# '=' || ch ==# '?'
+                let tokens+= ['\' . ch]
+            elseif ch ==# '('
+                let tokens+= ['\(']
+            elseif ch ==# ')'
+                let tokens+= ['\)']
+            elseif ch ==? 'm' || ch ==? 'v'
+                let tokens+= ['\' . ch]
+            elseif ch ==? 'c'
+                let tokens+= ['\' . ch]
+            elseif ch ==? 'i'
+                let tokens+= ['\' . ch]
+            elseif ch ==? 'k'
+                let tokens+= ['\' . ch]
+            elseif ch ==? 'f'
+                let tokens+= ['\' . ch]
+            elseif ch ==? 'p'
+                let tokens+= ['\' . ch]
+            elseif ch ==? 's'
+                let tokens+= ['\' . ch]
+            elseif ch ==? 'd'
+                let tokens+= ['\' . ch]
+            elseif ch ==? 'x'
+                let tokens+= ['\' . ch]
+            elseif ch ==? 'o'
+                let tokens+= ['\' . ch]
+            elseif ch ==? 'w'
+                let tokens+= ['\' . ch]
+            elseif ch ==? 'h'
+                let tokens+= ['\' . ch]
+            elseif ch ==? 'a'
+                let tokens+= ['\' . ch]
+            elseif ch ==? 'l'
+                let tokens+= ['\' . ch]
+            elseif ch ==? 'u'
+                let tokens+= ['\' . ch]
+            else
+                throw printf(&quot;Unsupported regex: `%s'&quot;, a:expr)
+            endif
+        else
+            let tokens+= [ch]
+        endif
+
+        let i+= 1
+    endwhile
+    return tokens
+endfunction
+
+command!
+\   -nargs=1
+\   RegexpTokenize
+\   echo s:tokenize(&lt;q-args&gt;)
+</code></pre>
+
+<h2 id="切り刻め">切り刻め！</h2>
+
+<p>以下のコマンドを実行してみましょう。
+切り刻まれ、正規表現単位に分割された文字列が表示されます。</p>
+
+<pre><code class="language-vim">&quot; =&gt; ['h', 'o', 'g', 'e', '\(', '\w', '\+', '\)', '\?']
+RegexpTokenize hoge\(\w\+\)\?
+&quot; =&gt; ['p', 'u', 'b', 'l', 'i', 'c']
+RegexpTokenize public
+&quot; =&gt; ['\d', '\+']
+RegexpTokenize \d\+
+&quot; =&gt; ['\d', '\+', '\(', ',', '\d', '\+', '\)', '\=']
+RegexpTokenize \d\+\(,\d\+\)\=
+</code></pre>
+
+<h2 id="最後に">最後に</h2>
+
+<p>この記事で書いたようなことをするライブラリとして、<a href="https://github.com/kamichidu/vim-regexp-assemble">vim-regexp-assemble</a>というものを作成しております。
+切り刻みたいだけなら、Vital.Regexp.Lexerを使えばそれで終わってしまいますし、この記事に記載した一部の正規表現だけでなく、Vimの正規表現すべてに対して対応しています。</p>
+
+<p>(help整備したら<a href="https://github.com/vim-jp/vital.vim">vital本家</a>に入れてもらうかもしれませんが、ちょっと先の話になりそう。)</p>
+
+<p>みなさんもっと正規表現で遊びましょう。
+ということで、20日目の記事を終わりたいと思います。
+明日はmitsuseさんです。</p>
+
+    </div>
+
+    <footer class="entry-meta">
+        <span class="tag-links">
+            
+                <a href="http://kamichidu.github.com//tags/vim/index.html" rel="tag">Vim</a>
+            
+        </span>
+    </footer>
+</article> 
+
+
+			<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'naruhaya';
+    var disqus_identifier = 'http:\/\/kamichidu.github.com\/post\/2014\/12\/20-parse-vim-regex\/';
+    var disqus_title = 'Vimの正規表現を切り刻む';
+    var disqus_url = 'http:\/\/kamichidu.github.com\/post\/2014\/12\/20-parse-vim-regex\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+		
+		</div>
+
+	</div>
+	<div id="secondary">
+
+    
+
+    <div id="primary-sidebar" class="primary-sidebar widget-area" role="complementary">
+
+        <script type="text/javascript">
+    function site_search(obj) {
+    	var host = window.location.host;
+        obj.q.value = "site:" + host + " " + obj.ss_q.value;
+    }
+</script>
+
+<aside id="search-3" class="widget widget_search">
+	<form role="search" class="search-form" action="//www.google.com/search" method="get" onSubmit="site_search(this)">
+
+	<input name="q" type="hidden" />
+	    <label>
+	        <span class="screen-reader-text">Search for:</span>
+	        <input name="ss_q" type="text" placeholder="Search ..." class="search-field" />
+	    </label>
+	    <input type="submit" value="Search" class="search-submit" />
+	</form>
+</aside>
+
+        <aside id="profile-3" class="widget widget_profile">
+
+    <h1 class="widget-title">Profile</h1>
+    <div>
+        
+        <p>
+            kamichidu
+        </p>
+        <p>
+            <a href="https://github.com/kamichidu" target="_blank"><img src="http://kamichidu.github.com//logos/github-light-32px.png"></a>
+            <a href="https://twitter.com/kamichidu" target="_blank"><img src="http://kamichidu.github.com//logos/twitter.svg"></a>
+        </p>
+    </div>
+
+</aside>
+
+
+        <aside id="categories-3" class="widget widget_categories">
+	
+	<h1 class="widget-title">Categories</h1>
+
+	<ul>
+		
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/announcement/index.html">Announcement</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/article/index.html">Article</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/development/index.html">Development</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/notice/index.html">Notice</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/report/index.html">Report</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/research/index.html">Research</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/tips/index.html">Tips</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/vim/index.html">Vim</a>
+		</li>
+
+		
+
+	</ul>
+
+</aside>
+
+        <aside id="archives-3" class="widget widget_archives">
+
+    
+
+</aside>
+
+
+    </div>
+
+</div>
+
+</div>
+
+		</div>
+
+		<footer id="colophon" class="site-footer" role="contentinfo">
+
+			<div class="site-info">
+				<a href="http://gohugo.io">Proudly powered by Hugo</a>
+			</div>
+		</footer>
+	</div>
+
+	<script type='text/javascript' src='http://kamichidu.github.com//js/functions.js'></script>
+</body>
+</html>

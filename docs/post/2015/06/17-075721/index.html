@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>PHPでの開発環境構築メモ &middot; なるはやで いい感じの 動作確認</title>
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <!--[if lt IE 9]>
+    <script src="http://kamichidu.github.com//js/html5.js"></script>
+    <![endif]-->
+
+    <link href="http://kamichidu.github.com//index.xml" rel="alternate" type="application/rss+xml" title="なるはやで いい感じの 動作確認" />
+
+    <link rel='stylesheet' id='twentyfourteen-lato-css'  href='//fonts.googleapis.com/css?family=Lato%3A300%2C400%2C700%2C900%2C300italic%2C400italic%2C700italic&#038;subset=latin%2Clatin-ext' type='text/css' media='all' />
+
+    <link rel='stylesheet' id='genericons-css' href='http://kamichidu.github.com//genericons/genericons.css' type='text/css' media='all' />
+    <link rel='stylesheet' id='twentyfourteen-style-css' href='http://kamichidu.github.com//css/style.css' type='text/css' media='all' />
+    
+    <script type='text/javascript' src='http://kamichidu.github.com//js/jquery/jquery.js'></script>
+    <script type='text/javascript' src='http://kamichidu.github.com//js/jquery/jquery-migrate.min.js'></script>
+    <style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+
+    <link rel="stylesheet" href="http://kamichidu.github.com//css/custom.css">
+    
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-71082560-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+</head>
+
+<body class="home blog masthead-fixed list-view full-width grid">
+<div id="page" class="hfeed site">
+    <header id="masthead" class="site-header" role="banner">
+        <div class="header-main">
+            <h1 class="site-title"><a href="http://kamichidu.github.com//index.html" rel="home">なるはやで いい感じの 動作確認</a></h1>
+        </div>
+    </header>
+
+    <div id="main" class="site-main">
+
+
+<div id="main-content" class="main-content">
+
+	<div id="primary" class="content-area">
+		<div id="content" class="site-content" role="main">
+
+			<article class="post type-post status-publish format-standard hentry">
+
+    
+    <header class="entry-header">
+
+    
+
+        <div class="entry-meta">
+            <span class="cat-links">
+                
+                <a href="http://kamichidu.github.com//categories/tips/index.html" rel="category">Tips</a>
+                
+            </span>
+        </div>
+
+        <h1 class="entry-title">PHPでの開発環境構築メモ</h1>
+
+        <div class="entry-meta">
+            <span class="entry-date">
+                <a href="http://kamichidu.github.com/post/2015/06/17-075721//index.html" rel="bookmark">
+                    <time class="entry-date" datetime="2015-06-17 00:00:00 &#43;0900 JST">
+                        2015 Jun 17
+                    </time>
+                </a>
+            </span>
+        </div>
+
+    </header>
+
+    <div class="entry-content">
+        
+
+<p>つい昨日のことですが、PHPでの開発環境を行ったので、メモがてら。</p>
+
+<p>手順だけはQiitaを参照。</p>
+
+<p><a href="http://qiita.com/kamichidu/items/384eecdf4df73b99fa84">http://qiita.com/kamichidu/items/384eecdf4df73b99fa84</a></p>
+
+<h2 id="phpのバージョン">PHPのバージョン</h2>
+
+<p>特に理由がないなら、現状の最新版を使うといいと思います。
+<a href="https://registry.hub.docker.com/">Docker Hub</a>には、<a href="https://registry.hub.docker.com/_/php/">PHP公式イメージ</a>が提供されているのでとても助かりました。</p>
+
+<p>公式イメージには、以下のバージョンがあるみたい。</p>
+
+<ul>
+<li>5.4.42-cli, 5.4-cli, 5.4.42, 5.4 (5.4/Dockerfile)</li>
+<li>5.4.42-apache, 5.4-apache (5.4/apache/Dockerfile)</li>
+<li>5.4.42-fpm, 5.4-fpm (5.4/fpm/Dockerfile)</li>
+<li>5.5.26-cli, 5.5-cli, 5.5.26, 5.5 (5.5/Dockerfile)</li>
+<li>5.5.26-apache, 5.5-apache (5.5/apache/Dockerfile)</li>
+<li>5.5.26-fpm, 5.5-fpm (5.5/fpm/Dockerfile)</li>
+<li>5.6.10-cli, 5.6-cli, 5-cli, cli, 5.6.10, 5.6, 5, latest (5.6/Dockerfile)</li>
+<li>5.6.10-apache, 5.6-apache, 5-apache, apache (5.6/apache/Dockerfile)</li>
+<li>5.6.10-fpm, 5.6-fpm, 5-fpm, fpm (5.6/fpm/Dockerfile)</li>
+</ul>
+
+<p>5.4、5.5、5.6系をそれぞれ選べて、しかも最初からApacheまでついてくるのは楽で良いですね。
+今回は、5.6-apacheを使いました。
+docker pull php:5.6-apacheでDocker HubからイメージをPullしてくる。</p>
+
+<h2 id="依存ライブラリの管理">依存ライブラリの管理</h2>
+
+<p>今までPHPは、メンテとか開発途中での引き継ぎとかで、自分で構築はやったことなかった。
+今回はSmartyとAWS SDKを使いたかったので、依存管理についてちょっと調べた。
+<a href="https://getcomposer.org/">Composer</a>が便利っぽい。
+どうでもいいけど、PHPって音楽っぽい名前が多いよね。</p>
+
+<p>composerはデフォルトでプロジェクトローカルへのインストールになります。
+インストールすると、composer.pharという実行可能ファイルがカレントディレクトリに作成されますので、これを使う。
+composer.jsonに、依存ライブラリを書いていき、./composer.phar installでプロジェクトローカルにインストールができる。
+依存関係インストールすると、composer.lockというありがちなファイルができる。</p>
+
+<p>諸説あるみたいだけど、Composerを使う上では、</p>
+
+<ol>
+<li>composer.phar</li>
+<li>composer.json</li>
+<li>composer.lock</li>
+</ol>
+
+<p>をバージョン管理しておいたほうが良さそう。
+理由は気が向いたら書く。</p>
+
+<p>一旦以上。
+多分あとで記載内容に修正入れると思う。</p>
+
+    </div>
+
+    <footer class="entry-meta">
+        <span class="tag-links">
+            
+                <a href="http://kamichidu.github.com//tags/php/index.html" rel="tag">PHP</a>
+            
+                <a href="http://kamichidu.github.com//tags/docker/index.html" rel="tag">Docker</a>
+            
+        </span>
+    </footer>
+</article> 
+
+
+			<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'naruhaya';
+    var disqus_identifier = 'http:\/\/kamichidu.github.com\/post\/2015\/06\/17-075721\/';
+    var disqus_title = 'PHPでの開発環境構築メモ';
+    var disqus_url = 'http:\/\/kamichidu.github.com\/post\/2015\/06\/17-075721\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+		
+		</div>
+
+	</div>
+	<div id="secondary">
+
+    
+
+    <div id="primary-sidebar" class="primary-sidebar widget-area" role="complementary">
+
+        <script type="text/javascript">
+    function site_search(obj) {
+    	var host = window.location.host;
+        obj.q.value = "site:" + host + " " + obj.ss_q.value;
+    }
+</script>
+
+<aside id="search-3" class="widget widget_search">
+	<form role="search" class="search-form" action="//www.google.com/search" method="get" onSubmit="site_search(this)">
+
+	<input name="q" type="hidden" />
+	    <label>
+	        <span class="screen-reader-text">Search for:</span>
+	        <input name="ss_q" type="text" placeholder="Search ..." class="search-field" />
+	    </label>
+	    <input type="submit" value="Search" class="search-submit" />
+	</form>
+</aside>
+
+        <aside id="profile-3" class="widget widget_profile">
+
+    <h1 class="widget-title">Profile</h1>
+    <div>
+        
+        <p>
+            kamichidu
+        </p>
+        <p>
+            <a href="https://github.com/kamichidu" target="_blank"><img src="http://kamichidu.github.com//logos/github-light-32px.png"></a>
+            <a href="https://twitter.com/kamichidu" target="_blank"><img src="http://kamichidu.github.com//logos/twitter.svg"></a>
+        </p>
+    </div>
+
+</aside>
+
+
+        <aside id="categories-3" class="widget widget_categories">
+	
+	<h1 class="widget-title">Categories</h1>
+
+	<ul>
+		
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/announcement/index.html">Announcement</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/article/index.html">Article</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/development/index.html">Development</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/notice/index.html">Notice</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/report/index.html">Report</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/research/index.html">Research</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/tips/index.html">Tips</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/vim/index.html">Vim</a>
+		</li>
+
+		
+
+	</ul>
+
+</aside>
+
+        <aside id="archives-3" class="widget widget_archives">
+
+    
+
+</aside>
+
+
+    </div>
+
+</div>
+
+</div>
+
+		</div>
+
+		<footer id="colophon" class="site-footer" role="contentinfo">
+
+			<div class="site-info">
+				<a href="http://gohugo.io">Proudly powered by Hugo</a>
+			</div>
+		</footer>
+	</div>
+
+	<script type='text/javascript' src='http://kamichidu.github.com//js/functions.js'></script>
+</body>
+</html>

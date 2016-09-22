@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>ProjectLをPlay storeで公開しました &middot; なるはやで いい感じの 動作確認</title>
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <!--[if lt IE 9]>
+    <script src="http://kamichidu.github.com//js/html5.js"></script>
+    <![endif]-->
+
+    <link href="http://kamichidu.github.com//index.xml" rel="alternate" type="application/rss+xml" title="なるはやで いい感じの 動作確認" />
+
+    <link rel='stylesheet' id='twentyfourteen-lato-css'  href='//fonts.googleapis.com/css?family=Lato%3A300%2C400%2C700%2C900%2C300italic%2C400italic%2C700italic&#038;subset=latin%2Clatin-ext' type='text/css' media='all' />
+
+    <link rel='stylesheet' id='genericons-css' href='http://kamichidu.github.com//genericons/genericons.css' type='text/css' media='all' />
+    <link rel='stylesheet' id='twentyfourteen-style-css' href='http://kamichidu.github.com//css/style.css' type='text/css' media='all' />
+    
+    <script type='text/javascript' src='http://kamichidu.github.com//js/jquery/jquery.js'></script>
+    <script type='text/javascript' src='http://kamichidu.github.com//js/jquery/jquery-migrate.min.js'></script>
+    <style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+
+    <link rel="stylesheet" href="http://kamichidu.github.com//css/custom.css">
+    
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-71082560-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+</head>
+
+<body class="home blog masthead-fixed list-view full-width grid">
+<div id="page" class="hfeed site">
+    <header id="masthead" class="site-header" role="banner">
+        <div class="header-main">
+            <h1 class="site-title"><a href="http://kamichidu.github.com//index.html" rel="home">なるはやで いい感じの 動作確認</a></h1>
+        </div>
+    </header>
+
+    <div id="main" class="site-main">
+
+
+<div id="main-content" class="main-content">
+
+	<div id="primary" class="content-area">
+		<div id="content" class="site-content" role="main">
+
+			<article class="post type-post status-publish format-standard hentry">
+
+    
+    <header class="entry-header">
+
+    
+
+        <div class="entry-meta">
+            <span class="cat-links">
+                
+                <a href="http://kamichidu.github.com//categories/announcement/index.html" rel="category">Announcement</a>
+                
+            </span>
+        </div>
+
+        <h1 class="entry-title">ProjectLをPlay storeで公開しました</h1>
+
+        <div class="entry-meta">
+            <span class="entry-date">
+                <a href="http://kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store//index.html" rel="bookmark">
+                    <time class="entry-date" datetime="2015-12-09 00:00:00 &#43;0900 JST">
+                        2015 Dec 9
+                    </time>
+                </a>
+            </span>
+        </div>
+
+    </header>
+
+    <div class="entry-content">
+        <p>以前から開発していたAndroid用Lingr Clientである&rdquo;ProjectL&rdquo;を、先日Play storeで公開しました。
+<a href="https://play.google.com/store/apps/details?id=akechi.projectl">こちら</a>からどうぞ。
+開発版は<a href="https://dply.me/epmlks">deploygateから配布をしていました</a>が、今回正式にPlay storeに登録しましたので、今後導入が楽になるかと思います。</p>
+
+<p>現在のバージョンは0.0.0。
+搭載機能は以下:</p>
+
+<ol>
+<li><p>過去ログ閲覧機能</p>
+
+<p>ないと困るやつ。</p></li>
+
+<li><p>画像のインライン展開機能</p>
+
+<p>設定画面から有効化する必要があります。
+Web版のLingrのように、画像がポストされると自動で展開します。</p></li>
+
+<li><p>通知機能</p>
+
+<p>設定画面から正規表現を登録しておく必要があります。
+登録した正規表現にマッチするメッセージが購読している部屋にポストされた段階で通知が来ます。</p></li>
+
+<li><p>10部屋制限突破機能</p>
+
+<p>設定画面から部屋IDの一覧を登録しておく必要があります。
+表示される部屋一覧が、設定画面で登録したものになり、Lingrの10部屋制限を突破することができます。</p></li>
+
+<li><p>(隠し機能)</p></li>
+</ol>
+
+<p>他細かい機能はありますが、記載は省略します。
+どうぞみなさん使ってみてください。
+改善要望やバグ報告は、githubのissuesで管理していますので、<a href="https://github.com/akechi/project-l/issues">こちら</a>からお願いします。</p>
+
+<hr />
+
+<p>少し寂しいので、開発の経緯を書こうと思います。</p>
+
+<p>私はもともとkanno_kannoさんが開発されたLingrPocketのユーザでした。
+ですがある日、LingrPocketがPlay storeから削除されていました。
+LingrPocket自体はまだ私の端末上にありましたが、今後端末を変更したりした際にインストールできないなと思い、DIYの精神で開発を始めました。</p>
+
+<p>テストに協力していただいた方々にはとても感謝しています。
+またTukushiGamoさんにはアイコンも作っていただいているので、足を向けて眠れないなという感じです。</p>
+
+<p>LingrPocketは現在Play storeに復活していますが、kanno_kannoさん自身今後アップデートする予定はないということです。
+LingrPocketには今まで非常にお世話になったので、Play storeに復活したこと自体がとても嬉しいです。</p>
+
+<p>ProjectLの今後のロードマップは予定は未定状態ですが、現在要望もらっている機能は一通り実装しようかと思っています。
+今後のこと考えると、ソースコードの整理も急ぎ目でやらないといけないのですが、仕事とプライベートが急がしくあまり開発の時間を取れておりません。
+おいおい色々やっていこうと思います。</p>
+
+    </div>
+
+    <footer class="entry-meta">
+        <span class="tag-links">
+            
+                <a href="http://kamichidu.github.com//tags/lingr/index.html" rel="tag">Lingr</a>
+            
+                <a href="http://kamichidu.github.com//tags/android/index.html" rel="tag">Android</a>
+            
+        </span>
+    </footer>
+</article> 
+
+
+			<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'naruhaya';
+    var disqus_identifier = 'http:\/\/kamichidu.github.com\/post\/2015\/12\/09-published-project-l-to-play-store\/';
+    var disqus_title = 'ProjectLをPlay storeで公開しました';
+    var disqus_url = 'http:\/\/kamichidu.github.com\/post\/2015\/12\/09-published-project-l-to-play-store\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+		
+		</div>
+
+	</div>
+	<div id="secondary">
+
+    
+
+    <div id="primary-sidebar" class="primary-sidebar widget-area" role="complementary">
+
+        <script type="text/javascript">
+    function site_search(obj) {
+    	var host = window.location.host;
+        obj.q.value = "site:" + host + " " + obj.ss_q.value;
+    }
+</script>
+
+<aside id="search-3" class="widget widget_search">
+	<form role="search" class="search-form" action="//www.google.com/search" method="get" onSubmit="site_search(this)">
+
+	<input name="q" type="hidden" />
+	    <label>
+	        <span class="screen-reader-text">Search for:</span>
+	        <input name="ss_q" type="text" placeholder="Search ..." class="search-field" />
+	    </label>
+	    <input type="submit" value="Search" class="search-submit" />
+	</form>
+</aside>
+
+        <aside id="profile-3" class="widget widget_profile">
+
+    <h1 class="widget-title">Profile</h1>
+    <div>
+        
+        <p>
+            kamichidu
+        </p>
+        <p>
+            <a href="https://github.com/kamichidu" target="_blank"><img src="http://kamichidu.github.com//logos/github-light-32px.png"></a>
+            <a href="https://twitter.com/kamichidu" target="_blank"><img src="http://kamichidu.github.com//logos/twitter.svg"></a>
+        </p>
+    </div>
+
+</aside>
+
+
+        <aside id="categories-3" class="widget widget_categories">
+	
+	<h1 class="widget-title">Categories</h1>
+
+	<ul>
+		
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/announcement/index.html">Announcement</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/article/index.html">Article</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/development/index.html">Development</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/notice/index.html">Notice</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/report/index.html">Report</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/research/index.html">Research</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/tips/index.html">Tips</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/vim/index.html">Vim</a>
+		</li>
+
+		
+
+	</ul>
+
+</aside>
+
+        <aside id="archives-3" class="widget widget_archives">
+
+    
+
+</aside>
+
+
+    </div>
+
+</div>
+
+</div>
+
+		</div>
+
+		<footer id="colophon" class="site-footer" role="contentinfo">
+
+			<div class="site-info">
+				<a href="http://gohugo.io">Proudly powered by Hugo</a>
+			</div>
+		</footer>
+	</div>
+
+	<script type='text/javascript' src='http://kamichidu.github.com//js/functions.js'></script>
+</body>
+</html>

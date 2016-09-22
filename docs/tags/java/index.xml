@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Java on なるはやで いい感じの 動作確認</title>
+    <link>http://kamichidu.github.com/tags/java/</link>
+    <description>Recent content in Java on なるはやで いい感じの 動作確認</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Sat, 25 Oct 2014 00:00:00 +0900</lastBuildDate>
+    <atom:link href="http://kamichidu.github.com/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>watchdogsを使ってjavaのシンタックスチェックを非同期に行う</title>
+      <link>http://kamichidu.github.com/post/2014/10/25-configure-watchdogs-for-javac/</link>
+      <pubDate>Sat, 25 Oct 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2014/10/25-configure-watchdogs-for-javac/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://github.com/osyo-manga/vim-watchdogs&#34;&gt;vim-watchdogs&lt;/a&gt;とは、&lt;a href=&#34;https://github.com/thinca/vim-quickrun&#34;&gt;vim-quickrun&lt;/a&gt;を使って非同期にシンタックスチェックを行う便利pluginです。
+詳しくはhelpか、&lt;a href=&#34;http://d.hatena.ne.jp/osyo-manga/20120924/1348473304&#34;&gt;おしょーさんの記事&lt;/a&gt;を参照してください。&lt;/p&gt;
+
+&lt;p&gt;javaのコンパイルを行うためにはclasspathの設定やら何やら、色々と煩雑な手順を踏む必要があります。
+mavenなんかを使えばこの辺楽になりますが、いちいちmaven compileなんてやってたら日が暮れてしまいます。
+そこでwatchdogsですよ。&lt;/p&gt;
+
+&lt;p&gt;以下の設定を$MYVIMRCに記述して、javaの編集中に:WatchdogsRunすれば、いい感じにqfixwindowが開くと思います。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;let g:quickrun_config[&#39;java/watchdogs_checker&#39;]= {&#39;type&#39;: &#39;watchdogs_checker/javac&#39;}
+let g:quickrun_config[&#39;watchdogs_checker/javac&#39;]= {
+\   &#39;command&#39;: &#39;$JAVA_HOME/bin/javac&#39;,
+\   &#39;cmdopt&#39;: join([
+\       &#39;-Xlint:all&#39;,
+\       &#39;-d $TEMP&#39;,
+\       &#39;-sourcepath &amp;quot;%{javaclasspath#source_path()}&amp;quot;&#39;,
+\       &#39;-classpath &amp;quot;%{javaclasspath#classpath()}&amp;quot;&#39;,
+\       &#39;-deprecation&#39;,
+\   ]),
+\   &#39;exec&#39;: &#39;%c %o %S&#39;,
+\   &#39;errorformat&#39;: &#39;%A%f:%l: %m,%-Z%p^,%+C%.%#,%-G%.%#&#39;,
+\}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;errorformatについては、:help errorformat-javacから引っぱってきました。
+ちょっと不満点あるんで、そのうちどうにかするかも。&lt;/p&gt;
+
+&lt;p&gt;ミソは&lt;a href=&#34;https://github.com/kamichidu/vim-javaclasspath&#34;&gt;vim-javaclasspath&lt;/a&gt;を使ってclasspathの設定やsourcepathの設定を簡略化してるところ。
+vim-javaclasspathが対応している限り、特に自分で何かしなくてもwatchdogsで非同期チェックが可能になります。&lt;/p&gt;
+
+&lt;p&gt;参考までに、私のqfixwindow関係の設定は、&lt;a href=&#34;http://d.hatena.ne.jp/thinca/20130708/1373210009&#34;&gt;thincaさんの記事&lt;/a&gt;を参考に入れています。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>unite-javaimportがメジャーバージョンアップしました</title>
+      <link>http://kamichidu.github.com/post/2014/10/19-release-note-for-unite-javaimport/</link>
+      <pubDate>Sun, 19 Oct 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2014/10/19-release-note-for-unite-javaimport/</guid>
+      <description>&lt;p&gt;今までバージョン0.2.xだった&lt;a href=&#34;https://github.com/kamichidu/vim-unite-javaimport&#34;&gt;unite-javaimport&lt;/a&gt;が、この度0.3.xになりました。
+内部構造が大幅に変更されているため、0.2.xと比べて&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;メモリ使用量の削減&lt;/p&gt;
+
+&lt;p&gt;0.2.xでは500M程使ってしまっていましたが、大きく改善されています。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;速度の向上&lt;/p&gt;
+
+&lt;p&gt;0.2.xでは内部的にローカルサーバを立ち上げて、javaimportが起動されるごとに計算を行っていました。
+0.3.xでは主にキャッシュ周りのファイル構成を見直し、一度起動した後は主にキャッシュから候補を取得するため、速度が向上しました。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;以上の点が改善されています。&lt;/p&gt;
+
+&lt;p&gt;また、新規機能の追加として、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;static import機能の追加&lt;/p&gt;
+
+&lt;p&gt;以下のunite-sourceが追加されています。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;javaimport/field&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;javaimport/method&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;また同時に、javaimport/classのアクションにexpandが追加されています。
+javaimport/classで選択したクラスをjavaimport/fieldおよびjavaimport/methodに渡して起動することができます。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/ctrlpvim/ctrlp.vim&#34;&gt;ctrlp&lt;/a&gt;をサポートしました&lt;/p&gt;
+
+&lt;p&gt;以下のコマンドが追加されています。
+ただしhelpはまだないので、実験的なものとなります。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;CtrlPJavaImportClass&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;CtrlPJavaImportField&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;CtrlPJavaImportMethod&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;以上の機能が追加されています。&lt;/p&gt;
+
+&lt;p&gt;また今後の開発についてですが、unite-sourceを主として開発するのではなく、メインのUIを別に作成することを考えています。
+uniteのサポートは今後とも継続するつもりですが、あくまでjavaimportのサポートする1つのインタフェイスという位置付けになります。
+今回ctrlpのサポートを追加したのも、この変更に対する伏線の意図があります。
+なお、本格的な変更は次回のメジャーバージョンアップで行う予定です。&lt;/p&gt;
+
+&lt;p&gt;不具合や要望があれば、&lt;a href=&#34;https://github.com/kamichidu/vim-unite-javaimport/issues&#34;&gt;githubのissues&lt;/a&gt;までお願いいたします。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>json-docletの仕様メモ</title>
+      <link>http://kamichidu.github.com/post/2014/10/04-json-doclet-spec/</link>
+      <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2014/10/04-json-doclet-spec/</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/kamichidu/java-json-doclet&#34;&gt;json-doclet&lt;/a&gt;はJavadocツール用のDoclet。
+標準Docletと違い、HTMLではなくJSONを吐き出します。&lt;/p&gt;
+
+&lt;p&gt;JSONでドキュメントを吐き出すため、アプリケーションからJavadocを利用することがHTMLに比べて容易です。
+以下、その仕様をまとめます。
+&lt;em&gt;開発中のため、予告なく仕様は変更になる可能性があります。&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;許容する引数&#34;&gt;許容する引数&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;-ofile (必須)&lt;/p&gt;
+
+&lt;p&gt;出力するファイル名を指定する。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;-append&lt;/p&gt;
+
+&lt;p&gt;-ofileで指定されたファイルに追記する。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;-pretty&lt;/p&gt;
+
+&lt;p&gt;JSONを出力時、整形された状態で出力する。&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;出力されるjsonオブジェクト&#34;&gt;出力されるJSONオブジェクト&lt;/h3&gt;
+
+&lt;h4 id=&#34;a-name-root-object-ルートオブジェクト-a&#34;&gt;&lt;a name=&#34;root-object&#34;&gt;ルートオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;classes - &lt;a href=&#34;#class-object&#34;&gt;クラスオブジェクト&lt;/a&gt;の配列&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-class-object-クラスオブジェクト-a&#34;&gt;&lt;a name=&#34;class-object&#34;&gt;クラスオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - クラスの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;interfaces - クラスが実装しているインタフェイスの正規名の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;superclass - 親クラスの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - クラスに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;since - @sinceタグの情報&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;see - @seeタグの情報を持つ配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;constructors - &lt;a href=&#34;#constructor-object&#34;&gt;コンストラクタオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;fields - &lt;a href=&#34;#field-object&#34;&gt;フィールドオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;methods - &lt;a href=&#34;#method-object&#34;&gt;メソッドオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-constructor-object-コンストラクタオブジェクト-a&#34;&gt;&lt;a name=&#34;constructor-object&#34;&gt;コンストラクタオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - コンストラクタメソッドの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - メソッドに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;parameters - &lt;a href=&#34;#method-parameter-object&#34;&gt;メソッドパラメータオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;throws - &lt;a href=&#34;#exception-object&#34;&gt;例外オブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-exception-object-例外オブジェクト-a&#34;&gt;&lt;a name=&#34;exception-object&#34;&gt;例外オブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - 例外クラスの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - @throwsタグに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-method-parameter-object-メソッドパラメータオブジェクト-a&#34;&gt;&lt;a name=&#34;method-parameter-object&#34;&gt;メソッドパラメータオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - 変数名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - @paramsタグに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;type - 型の正規名&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-field-object-フィールドオブジェクト-a&#34;&gt;&lt;a name=&#34;field-object&#34;&gt;フィールドオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - フィールド名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - フィールドに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;type - 型の正規名&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-method-object-メソッドオブジェクト-a&#34;&gt;&lt;a name=&#34;method-object&#34;&gt;メソッドオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - メソッドの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - メソッドに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;parameters - &lt;a href=&#34;#method-parameter-object&#34;&gt;メソッドパラメータオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;throws - &lt;a href=&#34;#exception-object&#34;&gt;例外オブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;return_type - メソッドから返却される型の正規名&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ref-javaというref-sourceを作っています</title>
+      <link>http://kamichidu.github.com/post/2014/10/04-making-ref-java/</link>
+      <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2014/10/04-making-ref-java/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://github.com/kamichidu/vim-ref-java&#34;&gt;https://github.com/kamichidu/vim-ref-java&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;まだ触りだけしか作ってなくて、ほぼ動かないに等しい状態ですが、Java用のref-sourceを作成しています。&lt;/p&gt;
+
+&lt;p&gt;refというのは、&lt;a href=&#34;http://d.hatena.ne.jp/thinca/&#34;&gt;thinca&lt;/a&gt;さんが作成された、Vimからドキュメントを閲覧するためのVim Pluginです。
+私は主にmanとperldocの閲覧に使っていました。
+常々Javaのサポートが欲しかったのですが、先日&lt;a href=&#34;https://github.com/kamichidu/java-json-doclet&#34;&gt;json-doclet&lt;/a&gt;というJavadoc用のDocletを作成したため、refを使ってJavadocが見たい欲求を叶えようとしています。&lt;/p&gt;
+
+&lt;p&gt;設計中の仕組みを、備忘を兼ねてメモ。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://maven.apache.org/&#34;&gt;maven&lt;/a&gt;を使い、&lt;a href=&#34;http://search.maven.org/&#34;&gt;Maven Central Repository&lt;/a&gt;から依存するJarをダウンロード&lt;/p&gt;
+
+&lt;p&gt;ここはPlugin側で自動的にダウンロードするより、-sources.jarをユーザが保持していることを前提としたほうが良くないか、と悩んでいます。
+要検討。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ダウンロードしたJarに対して、json-docletを使用してjson形式のJavadocファイルを作成&lt;/p&gt;
+
+&lt;p&gt;json-docletで出力するファイルは、元のJarに対してディレクトリ構造を保持したままref-java用のキャッシュディレクトリに格納する。
+もしくは、ref本体のキャッシュ機能に任せてしまって、ref-javaは独自にキャッシュの管理は行わない。&lt;/p&gt;
+
+&lt;p&gt;Jarの内容が変化することを考えて、キャッシュを行うのは前回キャッシュを行ってから変更のあったJarのみとする。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;作成されたJavadocファイルを、ref-javaから読み込み、ユーザからのクエリに従って表示&lt;/p&gt;
+
+&lt;p&gt;Javadocファイルは複数になるため、読み込み終わったタイミングでJavadoc情報のマージを行う。
+描画時には、&lt;a href=&#34;https://github.com/mattn/wwwrenderer-vim&#34;&gt;wwwrenderer-vim&lt;/a&gt;を使用する。
+ただし、HTMLのより良い表示と速度のため、別の手段を考える必要があるかもしれない。&lt;/p&gt;
+
+&lt;p&gt;ユーザからのクエリについては、使い勝手を考慮して独自の解釈を行う必要があるかも。&lt;/p&gt;
+
+&lt;p&gt;このとき、クラスドキュメントの表示、メソッドやフィールドドキュメントの表示について、別途対応したい。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
