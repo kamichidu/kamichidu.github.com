@@ -5,7 +5,6 @@ hasCJKLanguage = true
 theme = "twentyfourteen"
 googleAnalytics = "UA-71082560-1"
 disqusShortname = "naruhaya"
-publishDir = "docs"
 
 [taxonomies]
     categories = "categories"
