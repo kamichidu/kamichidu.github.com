@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Announcement on なるはやで いい感じの 動作確認</title>
-    <link>https://kamichidu.github.com/categories/announcement/</link>
+    <link>https://kamichidu.github.io/categories/announcement/</link>
     <description>Recent content in Announcement on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Wed, 09 Dec 2015 00:00:00 +0900</lastBuildDate>
-    <atom:link href="https://kamichidu.github.com/categories/announcement/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://kamichidu.github.io/categories/announcement/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>ProjectLをPlay storeで公開しました</title>
-      <link>https://kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store/</link>
+      <link>https://kamichidu.github.io/post/2015/12/09-published-project-l-to-play-store/</link>
       <pubDate>Wed, 09 Dec 2015 00:00:00 +0900</pubDate>
       
-      <guid>https://kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store/</guid>
+      <guid>https://kamichidu.github.io/post/2015/12/09-published-project-l-to-play-store/</guid>
       <description>&lt;p&gt;以前から開発していたAndroid用Lingr Clientである&amp;rdquo;ProjectL&amp;rdquo;を、先日Play storeで公開しました。
 &lt;a href=&#34;https://play.google.com/store/apps/details?id=akechi.projectl&#34;&gt;こちら&lt;/a&gt;からどうぞ。
 開発版は&lt;a href=&#34;https://dply.me/epmlks&#34;&gt;deploygateから配布をしていました&lt;/a&gt;が、今回正式にPlay storeに登録しましたので、今後導入が楽になるかと思います。&lt;/p&gt;
@@ -71,10 +71,10 @@ LingrPocketには今まで非常にお世話になったので、Play storeに�
     
     <item>
       <title>unite-javaimportがメジャーバージョンアップしました</title>
-      <link>https://kamichidu.github.com/post/2014/10/19-release-note-for-unite-javaimport/</link>
+      <link>https://kamichidu.github.io/post/2014/10/19-release-note-for-unite-javaimport/</link>
       <pubDate>Sun, 19 Oct 2014 00:00:00 +0900</pubDate>
       
-      <guid>https://kamichidu.github.com/post/2014/10/19-release-note-for-unite-javaimport/</guid>
+      <guid>https://kamichidu.github.io/post/2014/10/19-release-note-for-unite-javaimport/</guid>
       <description>&lt;p&gt;今までバージョン0.2.xだった&lt;a href=&#34;https://github.com/kamichidu/vim-unite-javaimport&#34;&gt;unite-javaimport&lt;/a&gt;が、この度0.3.xになりました。
 内部構造が大幅に変更されているため、0.2.xと比べて&lt;/p&gt;
 
@@ -134,10 +134,10 @@ uniteのサポートは今後とも継続するつもりですが、あくまで
     
     <item>
       <title>リポジトリ名を変更しました</title>
-      <link>https://kamichidu.github.com/post/2014/10/04-changed-my-repository-name/</link>
+      <link>https://kamichidu.github.io/post/2014/10/04-changed-my-repository-name/</link>
       <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
       
-      <guid>https://kamichidu.github.com/post/2014/10/04-changed-my-repository-name/</guid>
+      <guid>https://kamichidu.github.io/post/2014/10/04-changed-my-repository-name/</guid>
       <description>&lt;p&gt;githubのリポジトリ名が、統一感なかったため一部変更を行いました。
 私のプロダクトをお使いの方は、githubがよしなにリダイレクトしてくれるので、今すぐに設定を変更して頂く必要はありません。
 これ以降、私のプロダクトを使って頂ける方がいましたら、新しいURLでのご利用をお願いいたします。&lt;/p&gt;

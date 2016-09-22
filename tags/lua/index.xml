@@ -2,25 +2,25 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Lua on なるはやで いい感じの 動作確認</title>
-    <link>https://kamichidu.github.com/tags/lua/</link>
+    <link>https://kamichidu.github.io/tags/lua/</link>
     <description>Recent content in Lua on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Sun, 02 Nov 2014 00:00:00 +0900</lastBuildDate>
-    <atom:link href="https://kamichidu.github.com/tags/lua/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://kamichidu.github.io/tags/lua/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Vimで、データ量に応じたデータ転送速度を計測してみた</title>
-      <link>https://kamichidu.github.com/post/2014/11/02-vim-data-transfer-time/</link>
+      <link>https://kamichidu.github.io/post/2014/11/02-vim-data-transfer-time/</link>
       <pubDate>Sun, 02 Nov 2014 00:00:00 +0900</pubDate>
       
-      <guid>https://kamichidu.github.com/post/2014/11/02-vim-data-transfer-time/</guid>
+      <guid>https://kamichidu.github.io/post/2014/11/02-vim-data-transfer-time/</guid>
       <description>&lt;p&gt;私の作成するpluginでは、巨大なデータをあれこれすることが多いので、Vimでどの程度の時間がかかるかを計測してみた。
 以下のグラフを見れば、大体の傾向が掴めるかと思います。
 細かい数値は環境によっても変わるとは思いますが、ここではざっくりとした傾向と大雑把な処理時間がわかればいいと割り切っています。
 ちなみにArch Linuxでの計測です。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://kamichidu.github.com/images/2014-11-02-vim-data-transfer-time.png&#34; alt=&#34;graph&#34; title=&#34;readfile、libcall、if_luaのデータ転送速度&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://kamichidu.github.io/images/2014-11-02-vim-data-transfer-time.png&#34; alt=&#34;graph&#34; title=&#34;readfile、libcall、if_luaのデータ転送速度&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;グラフからわかることは、&lt;/p&gt;
 

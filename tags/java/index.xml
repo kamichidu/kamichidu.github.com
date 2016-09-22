@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Java on なるはやで いい感じの 動作確認</title>
-    <link>https://kamichidu.github.com/tags/java/</link>
+    <link>https://kamichidu.github.io/tags/java/</link>
     <description>Recent content in Java on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Sat, 25 Oct 2014 00:00:00 +0900</lastBuildDate>
-    <atom:link href="https://kamichidu.github.com/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://kamichidu.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>watchdogsを使ってjavaのシンタックスチェックを非同期に行う</title>
-      <link>https://kamichidu.github.com/post/2014/10/25-configure-watchdogs-for-javac/</link>
+      <link>https://kamichidu.github.io/post/2014/10/25-configure-watchdogs-for-javac/</link>
       <pubDate>Sat, 25 Oct 2014 00:00:00 +0900</pubDate>
       
-      <guid>https://kamichidu.github.com/post/2014/10/25-configure-watchdogs-for-javac/</guid>
+      <guid>https://kamichidu.github.io/post/2014/10/25-configure-watchdogs-for-javac/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://github.com/osyo-manga/vim-watchdogs&#34;&gt;vim-watchdogs&lt;/a&gt;とは、&lt;a href=&#34;https://github.com/thinca/vim-quickrun&#34;&gt;vim-quickrun&lt;/a&gt;を使って非同期にシンタックスチェックを行う便利pluginです。
 詳しくはhelpか、&lt;a href=&#34;http://d.hatena.ne.jp/osyo-manga/20120924/1348473304&#34;&gt;おしょーさんの記事&lt;/a&gt;を参照してください。&lt;/p&gt;
 
@@ -51,10 +51,10 @@ vim-javaclasspathが対応している限り、特に自分で何かしなくて
     
     <item>
       <title>unite-javaimportがメジャーバージョンアップしました</title>
-      <link>https://kamichidu.github.com/post/2014/10/19-release-note-for-unite-javaimport/</link>
+      <link>https://kamichidu.github.io/post/2014/10/19-release-note-for-unite-javaimport/</link>
       <pubDate>Sun, 19 Oct 2014 00:00:00 +0900</pubDate>
       
-      <guid>https://kamichidu.github.com/post/2014/10/19-release-note-for-unite-javaimport/</guid>
+      <guid>https://kamichidu.github.io/post/2014/10/19-release-note-for-unite-javaimport/</guid>
       <description>&lt;p&gt;今までバージョン0.2.xだった&lt;a href=&#34;https://github.com/kamichidu/vim-unite-javaimport&#34;&gt;unite-javaimport&lt;/a&gt;が、この度0.3.xになりました。
 内部構造が大幅に変更されているため、0.2.xと比べて&lt;/p&gt;
 
@@ -114,10 +114,10 @@ uniteのサポートは今後とも継続するつもりですが、あくまで
     
     <item>
       <title>json-docletの仕様メモ</title>
-      <link>https://kamichidu.github.com/post/2014/10/04-json-doclet-spec/</link>
+      <link>https://kamichidu.github.io/post/2014/10/04-json-doclet-spec/</link>
       <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
       
-      <guid>https://kamichidu.github.com/post/2014/10/04-json-doclet-spec/</guid>
+      <guid>https://kamichidu.github.io/post/2014/10/04-json-doclet-spec/</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/kamichidu/java-json-doclet&#34;&gt;json-doclet&lt;/a&gt;はJavadocツール用のDoclet。
@@ -233,10 +233,10 @@ uniteのサポートは今後とも継続するつもりですが、あくまで
     
     <item>
       <title>ref-javaというref-sourceを作っています</title>
-      <link>https://kamichidu.github.com/post/2014/10/04-making-ref-java/</link>
+      <link>https://kamichidu.github.io/post/2014/10/04-making-ref-java/</link>
       <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
       
-      <guid>https://kamichidu.github.com/post/2014/10/04-making-ref-java/</guid>
+      <guid>https://kamichidu.github.io/post/2014/10/04-making-ref-java/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://github.com/kamichidu/vim-ref-java&#34;&gt;https://github.com/kamichidu/vim-ref-java&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;まだ触りだけしか作ってなくて、ほぼ動かないに等しい状態ですが、Java用のref-sourceを作成しています。&lt;/p&gt;
