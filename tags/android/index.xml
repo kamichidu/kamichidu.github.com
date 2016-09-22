@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Android on なるはやで いい感じの 動作確認</title>
-    <link>//kamichidu.github.com/tags/android/</link>
+    <link>https://kamichidu.github.com/tags/android/</link>
     <description>Recent content in Android on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Wed, 09 Dec 2015 00:00:00 +0900</lastBuildDate>
-    <atom:link href="//kamichidu.github.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://kamichidu.github.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>ProjectLをPlay storeで公開しました</title>
-      <link>//kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store/</link>
+      <link>https://kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store/</link>
       <pubDate>Wed, 09 Dec 2015 00:00:00 +0900</pubDate>
       
-      <guid>//kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store/</guid>
+      <guid>https://kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store/</guid>
       <description>&lt;p&gt;以前から開発していたAndroid用Lingr Clientである&amp;rdquo;ProjectL&amp;rdquo;を、先日Play storeで公開しました。
 &lt;a href=&#34;https://play.google.com/store/apps/details?id=akechi.projectl&#34;&gt;こちら&lt;/a&gt;からどうぞ。
 開発版は&lt;a href=&#34;https://dply.me/epmlks&#34;&gt;deploygateから配布をしていました&lt;/a&gt;が、今回正式にPlay storeに登録しましたので、今後導入が楽になるかと思います。&lt;/p&gt;

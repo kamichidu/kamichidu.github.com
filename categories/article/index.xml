@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Article on なるはやで いい感じの 動作確認</title>
-    <link>//kamichidu.github.com/categories/article/</link>
+    <link>https://kamichidu.github.com/categories/article/</link>
     <description>Recent content in Article on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Tue, 20 Sep 2016 00:00:00 +0900</lastBuildDate>
-    <atom:link href="//kamichidu.github.com/categories/article/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://kamichidu.github.com/categories/article/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>ブラウザ上でのJavaScriptエラーを収集する手法について</title>
-      <link>//kamichidu.github.com/post/2016/09/20-collecting-error-log-on-the-browser/</link>
+      <link>https://kamichidu.github.com/post/2016/09/20-collecting-error-log-on-the-browser/</link>
       <pubDate>Tue, 20 Sep 2016 00:00:00 +0900</pubDate>
       
-      <guid>//kamichidu.github.com/post/2016/09/20-collecting-error-log-on-the-browser/</guid>
+      <guid>https://kamichidu.github.com/post/2016/09/20-collecting-error-log-on-the-browser/</guid>
       <description>
 
 &lt;p&gt;現代的なWebサービスを構築する場合、避けては通れないのが各種ログの収集と活用です。
@@ -144,10 +144,10 @@ else
     
     <item>
       <title>高速なVim Plug-inについての一考察</title>
-      <link>//kamichidu.github.com/post/2015/12/06-vim-speed-consideration/</link>
+      <link>https://kamichidu.github.com/post/2015/12/06-vim-speed-consideration/</link>
       <pubDate>Sun, 06 Dec 2015 00:00:00 +0900</pubDate>
       
-      <guid>//kamichidu.github.com/post/2015/12/06-vim-speed-consideration/</guid>
+      <guid>https://kamichidu.github.com/post/2015/12/06-vim-speed-consideration/</guid>
       <description>
 
 &lt;p&gt;この記事はVim Advent Calendar 2015の6日目の記事です。
