@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Development on なるはやで いい感じの 動作確認</title>
+    <link>http://kamichidu.github.com/categories/development/</link>
+    <description>Recent content in Development on なるはやで いい感じの 動作確認</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Sat, 04 Oct 2014 00:00:00 +0900</lastBuildDate>
+    <atom:link href="http://kamichidu.github.com/categories/development/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>json-docletの仕様メモ</title>
+      <link>http://kamichidu.github.com/post/2014/10/04-json-doclet-spec/</link>
+      <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2014/10/04-json-doclet-spec/</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/kamichidu/java-json-doclet&#34;&gt;json-doclet&lt;/a&gt;はJavadocツール用のDoclet。
+標準Docletと違い、HTMLではなくJSONを吐き出します。&lt;/p&gt;
+
+&lt;p&gt;JSONでドキュメントを吐き出すため、アプリケーションからJavadocを利用することがHTMLに比べて容易です。
+以下、その仕様をまとめます。
+&lt;em&gt;開発中のため、予告なく仕様は変更になる可能性があります。&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;許容する引数&#34;&gt;許容する引数&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;-ofile (必須)&lt;/p&gt;
+
+&lt;p&gt;出力するファイル名を指定する。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;-append&lt;/p&gt;
+
+&lt;p&gt;-ofileで指定されたファイルに追記する。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;-pretty&lt;/p&gt;
+
+&lt;p&gt;JSONを出力時、整形された状態で出力する。&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;出力されるjsonオブジェクト&#34;&gt;出力されるJSONオブジェクト&lt;/h3&gt;
+
+&lt;h4 id=&#34;a-name-root-object-ルートオブジェクト-a&#34;&gt;&lt;a name=&#34;root-object&#34;&gt;ルートオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;classes - &lt;a href=&#34;#class-object&#34;&gt;クラスオブジェクト&lt;/a&gt;の配列&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-class-object-クラスオブジェクト-a&#34;&gt;&lt;a name=&#34;class-object&#34;&gt;クラスオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - クラスの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;interfaces - クラスが実装しているインタフェイスの正規名の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;superclass - 親クラスの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - クラスに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;since - @sinceタグの情報&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;see - @seeタグの情報を持つ配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;constructors - &lt;a href=&#34;#constructor-object&#34;&gt;コンストラクタオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;fields - &lt;a href=&#34;#field-object&#34;&gt;フィールドオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;methods - &lt;a href=&#34;#method-object&#34;&gt;メソッドオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-constructor-object-コンストラクタオブジェクト-a&#34;&gt;&lt;a name=&#34;constructor-object&#34;&gt;コンストラクタオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - コンストラクタメソッドの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - メソッドに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;parameters - &lt;a href=&#34;#method-parameter-object&#34;&gt;メソッドパラメータオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;throws - &lt;a href=&#34;#exception-object&#34;&gt;例外オブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-exception-object-例外オブジェクト-a&#34;&gt;&lt;a name=&#34;exception-object&#34;&gt;例外オブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - 例外クラスの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - @throwsタグに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-method-parameter-object-メソッドパラメータオブジェクト-a&#34;&gt;&lt;a name=&#34;method-parameter-object&#34;&gt;メソッドパラメータオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - 変数名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - @paramsタグに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;type - 型の正規名&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-field-object-フィールドオブジェクト-a&#34;&gt;&lt;a name=&#34;field-object&#34;&gt;フィールドオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - フィールド名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - フィールドに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;type - 型の正規名&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-method-object-メソッドオブジェクト-a&#34;&gt;&lt;a name=&#34;method-object&#34;&gt;メソッドオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - メソッドの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - メソッドに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;parameters - &lt;a href=&#34;#method-parameter-object&#34;&gt;メソッドパラメータオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;throws - &lt;a href=&#34;#exception-object&#34;&gt;例外オブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;return_type - メソッドから返却される型の正規名&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ref-javaというref-sourceを作っています</title>
+      <link>http://kamichidu.github.com/post/2014/10/04-making-ref-java/</link>
+      <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2014/10/04-making-ref-java/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://github.com/kamichidu/vim-ref-java&#34;&gt;https://github.com/kamichidu/vim-ref-java&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;まだ触りだけしか作ってなくて、ほぼ動かないに等しい状態ですが、Java用のref-sourceを作成しています。&lt;/p&gt;
+
+&lt;p&gt;refというのは、&lt;a href=&#34;http://d.hatena.ne.jp/thinca/&#34;&gt;thinca&lt;/a&gt;さんが作成された、Vimからドキュメントを閲覧するためのVim Pluginです。
+私は主にmanとperldocの閲覧に使っていました。
+常々Javaのサポートが欲しかったのですが、先日&lt;a href=&#34;https://github.com/kamichidu/java-json-doclet&#34;&gt;json-doclet&lt;/a&gt;というJavadoc用のDocletを作成したため、refを使ってJavadocが見たい欲求を叶えようとしています。&lt;/p&gt;
+
+&lt;p&gt;設計中の仕組みを、備忘を兼ねてメモ。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://maven.apache.org/&#34;&gt;maven&lt;/a&gt;を使い、&lt;a href=&#34;http://search.maven.org/&#34;&gt;Maven Central Repository&lt;/a&gt;から依存するJarをダウンロード&lt;/p&gt;
+
+&lt;p&gt;ここはPlugin側で自動的にダウンロードするより、-sources.jarをユーザが保持していることを前提としたほうが良くないか、と悩んでいます。
+要検討。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ダウンロードしたJarに対して、json-docletを使用してjson形式のJavadocファイルを作成&lt;/p&gt;
+
+&lt;p&gt;json-docletで出力するファイルは、元のJarに対してディレクトリ構造を保持したままref-java用のキャッシュディレクトリに格納する。
+もしくは、ref本体のキャッシュ機能に任せてしまって、ref-javaは独自にキャッシュの管理は行わない。&lt;/p&gt;
+
+&lt;p&gt;Jarの内容が変化することを考えて、キャッシュを行うのは前回キャッシュを行ってから変更のあったJarのみとする。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;作成されたJavadocファイルを、ref-javaから読み込み、ユーザからのクエリに従って表示&lt;/p&gt;
+
+&lt;p&gt;Javadocファイルは複数になるため、読み込み終わったタイミングでJavadoc情報のマージを行う。
+描画時には、&lt;a href=&#34;https://github.com/mattn/wwwrenderer-vim&#34;&gt;wwwrenderer-vim&lt;/a&gt;を使用する。
+ただし、HTMLのより良い表示と速度のため、別の手段を考える必要があるかもしれない。&lt;/p&gt;
+
+&lt;p&gt;ユーザからのクエリについては、使い勝手を考慮して独自の解釈を行う必要があるかも。&lt;/p&gt;
+
+&lt;p&gt;このとき、クラスドキュメントの表示、メソッドやフィールドドキュメントの表示について、別途対応したい。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

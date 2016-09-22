@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Vimで、データ量に応じたデータ転送速度を計測してみた &middot; なるはやで いい感じの 動作確認</title>
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <!--[if lt IE 9]>
+    <script src="http://kamichidu.github.com//js/html5.js"></script>
+    <![endif]-->
+
+    <link href="http://kamichidu.github.com//index.xml" rel="alternate" type="application/rss+xml" title="なるはやで いい感じの 動作確認" />
+
+    <link rel='stylesheet' id='twentyfourteen-lato-css'  href='//fonts.googleapis.com/css?family=Lato%3A300%2C400%2C700%2C900%2C300italic%2C400italic%2C700italic&#038;subset=latin%2Clatin-ext' type='text/css' media='all' />
+
+    <link rel='stylesheet' id='genericons-css' href='http://kamichidu.github.com//genericons/genericons.css' type='text/css' media='all' />
+    <link rel='stylesheet' id='twentyfourteen-style-css' href='http://kamichidu.github.com//css/style.css' type='text/css' media='all' />
+    
+    <script type='text/javascript' src='http://kamichidu.github.com//js/jquery/jquery.js'></script>
+    <script type='text/javascript' src='http://kamichidu.github.com//js/jquery/jquery-migrate.min.js'></script>
+    <style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+
+    <link rel="stylesheet" href="http://kamichidu.github.com//css/custom.css">
+    
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-71082560-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+</head>
+
+<body class="home blog masthead-fixed list-view full-width grid">
+<div id="page" class="hfeed site">
+    <header id="masthead" class="site-header" role="banner">
+        <div class="header-main">
+            <h1 class="site-title"><a href="http://kamichidu.github.com//index.html" rel="home">なるはやで いい感じの 動作確認</a></h1>
+        </div>
+    </header>
+
+    <div id="main" class="site-main">
+
+
+<div id="main-content" class="main-content">
+
+	<div id="primary" class="content-area">
+		<div id="content" class="site-content" role="main">
+
+			<article class="post type-post status-publish format-standard hentry">
+
+    
+    <header class="entry-header">
+
+    
+
+        <div class="entry-meta">
+            <span class="cat-links">
+                
+                <a href="http://kamichidu.github.com//categories/research/index.html" rel="category">Research</a>
+                
+            </span>
+        </div>
+
+        <h1 class="entry-title">Vimで、データ量に応じたデータ転送速度を計測してみた</h1>
+
+        <div class="entry-meta">
+            <span class="entry-date">
+                <a href="http://kamichidu.github.com/post/2014/11/02-vim-data-transfer-time//index.html" rel="bookmark">
+                    <time class="entry-date" datetime="2014-11-02 00:00:00 &#43;0900 JST">
+                        2014 Nov 2
+                    </time>
+                </a>
+            </span>
+        </div>
+
+    </header>
+
+    <div class="entry-content">
+        <p>私の作成するpluginでは、巨大なデータをあれこれすることが多いので、Vimでどの程度の時間がかかるかを計測してみた。
+以下のグラフを見れば、大体の傾向が掴めるかと思います。
+細かい数値は環境によっても変わるとは思いますが、ここではざっくりとした傾向と大雑把な処理時間がわかればいいと割り切っています。
+ちなみにArch Linuxでの計測です。</p>
+
+<p><img src="/images/2014-11-02-vim-data-transfer-time.png" alt="graph" title="readfile、libcall、if_luaのデータ転送速度" /></p>
+
+<p>グラフからわかることは、</p>
+
+<ol>
+<li><p>if_lua以外はデータ量に線形比例する時間がかかる</p></li>
+
+<li><p>readfile()はそれほど時間がかかるものではない</p>
+
+<p>単純にIO + メモリ確保程度だと思われる。</p></li>
+
+<li><p>libcall()では文字列経由で渡す必要があるので、かなり時間のかかる処理になっている</p></li>
+
+<li><p>if_luaは参照経由でのデータ受け渡しが可能なため、非常に高速にデータの受け渡しが行える</p></li>
+</ol>
+
+<p>グラフ中で処理時間にぶれがあるのは、恐らくIOの待ち時間でしょう。</p>
+
+<p>libcall()で巨大なデータを扱う必要がある場合、ファイル経由での受け渡しをする等の対策が必要になるかもしれません。</p>
+
+<p>if_luaについては、参照で受け渡せるため、データの受け渡しには時間はかかりません。</p>
+
+<p>libcall()とif_luaのどちらが高速か、は、luajitが使えるかどうかと、処理の内容によるので一概には言えませんが、データの受け渡しという観点から見た場合はif_luaが有利なように思えます。
+もちろん、ファイル経由で受け渡す等、高速化のためのチューニングを行えば、libcall()でも十分な速度が稼げると思います。</p>
+
+<p>今回用いたベンチマークスクリプトは<a href="https://gist.github.com/kamichidu/941c633f1978835dc9f5">gistに上げています</a>ので、興味のある方はご参照ください。</p>
+
+    </div>
+
+    <footer class="entry-meta">
+        <span class="tag-links">
+            
+                <a href="http://kamichidu.github.com//tags/vim/index.html" rel="tag">Vim</a>
+            
+                <a href="http://kamichidu.github.com//tags/lua/index.html" rel="tag">Lua</a>
+            
+        </span>
+    </footer>
+</article> 
+
+
+			<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'naruhaya';
+    var disqus_identifier = 'http:\/\/kamichidu.github.com\/post\/2014\/11\/02-vim-data-transfer-time\/';
+    var disqus_title = 'Vimで、データ量に応じたデータ転送速度を計測してみた';
+    var disqus_url = 'http:\/\/kamichidu.github.com\/post\/2014\/11\/02-vim-data-transfer-time\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+		
+		</div>
+
+	</div>
+	<div id="secondary">
+
+    
+
+    <div id="primary-sidebar" class="primary-sidebar widget-area" role="complementary">
+
+        <script type="text/javascript">
+    function site_search(obj) {
+    	var host = window.location.host;
+        obj.q.value = "site:" + host + " " + obj.ss_q.value;
+    }
+</script>
+
+<aside id="search-3" class="widget widget_search">
+	<form role="search" class="search-form" action="//www.google.com/search" method="get" onSubmit="site_search(this)">
+
+	<input name="q" type="hidden" />
+	    <label>
+	        <span class="screen-reader-text">Search for:</span>
+	        <input name="ss_q" type="text" placeholder="Search ..." class="search-field" />
+	    </label>
+	    <input type="submit" value="Search" class="search-submit" />
+	</form>
+</aside>
+
+        <aside id="profile-3" class="widget widget_profile">
+
+    <h1 class="widget-title">Profile</h1>
+    <div>
+        
+        <p>
+            kamichidu
+        </p>
+        <p>
+            <a href="https://github.com/kamichidu" target="_blank"><img src="http://kamichidu.github.com//logos/github-light-32px.png"></a>
+            <a href="https://twitter.com/kamichidu" target="_blank"><img src="http://kamichidu.github.com//logos/twitter.svg"></a>
+        </p>
+    </div>
+
+</aside>
+
+
+        <aside id="categories-3" class="widget widget_categories">
+	
+	<h1 class="widget-title">Categories</h1>
+
+	<ul>
+		
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/announcement/index.html">Announcement</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/article/index.html">Article</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/development/index.html">Development</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/notice/index.html">Notice</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/report/index.html">Report</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/research/index.html">Research</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/tips/index.html">Tips</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="http://kamichidu.github.com//categories/vim/index.html">Vim</a>
+		</li>
+
+		
+
+	</ul>
+
+</aside>
+
+        <aside id="archives-3" class="widget widget_archives">
+
+    
+
+</aside>
+
+
+    </div>
+
+</div>
+
+</div>
+
+		</div>
+
+		<footer id="colophon" class="site-footer" role="contentinfo">
+
+			<div class="site-info">
+				<a href="http://gohugo.io">Proudly powered by Hugo</a>
+			</div>
+		</footer>
+	</div>
+
+	<script type='text/javascript' src='http://kamichidu.github.com//js/functions.js'></script>
+</body>
+</html>

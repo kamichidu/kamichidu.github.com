@@ -1,0 +1,1204 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on なるはやで いい感じの 動作確認</title>
+    <link>http://kamichidu.github.com/post/</link>
+    <description>Recent content in Posts on なるはやで いい感じの 動作確認</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Tue, 20 Sep 2016 00:00:00 +0900</lastBuildDate>
+    <atom:link href="http://kamichidu.github.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>ブラウザ上でのJavaScriptエラーを収集する手法について</title>
+      <link>http://kamichidu.github.com/post/2016/09/20-collecting-error-log-on-the-browser/</link>
+      <pubDate>Tue, 20 Sep 2016 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2016/09/20-collecting-error-log-on-the-browser/</guid>
+      <description>
+
+&lt;p&gt;現代的なWebサービスを構築する場合、避けては通れないのが各種ログの収集と活用です。
+HTTPサーバの各種ログ (e.g. アクセスログ、エラーログ) を始めとして、サーバサイドのアプリケーションログなどもよく収集されています。
+サーバサイドのログについては、fluentdなど、収集するための手法はある程度確立しているように思いますが、フロントエンドでのログ収集については、あまり議論されていないように思います。&lt;/p&gt;
+
+&lt;p&gt;先日、お仕事でWebサービスを作成したのですが、そのときに改めてブラウザ上でのエラーログの収集について本気出して考えてみたので、ここに記事としてまとめてみようと思います。&lt;/p&gt;
+
+&lt;h1 id=&#34;ブラウザ上のエラーログ収集の目的&#34;&gt;ブラウザ上のエラーログ収集の目的&lt;/h1&gt;
+
+&lt;p&gt;まず収集する目的についてですが、大きなところで以下のようになるかと思います。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;継続的な不具合修正のため (サービス改善)&lt;/li&gt;
+&lt;li&gt;ユーザからの問い合わせ時に調査するため (サポート改善)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;特に強調したいのは、サポートの改善という側面です。
+Webサービスを継続的に運用していく場合、どうしてもサポートに時間を割かざるを得ません。&lt;/p&gt;
+
+&lt;p&gt;サポート対象外のブラウザでサービスを利用された場合でも、『動かない』という問い合わせを受ける可能性は大いにあります。
+このようなケースでは、以下のフローで問い合わせ対応を行うでしょう。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;ユーザからの問い合わせを受ける&lt;/li&gt;
+&lt;li&gt;サポートから利用ブラウザとバージョンについて、ユーザに質問する&lt;/li&gt;
+&lt;li&gt;ユーザからの回答を得、サポート対象外である旨を伝える&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;しかし、ユーザのITリテラシによっては、利用しているブラウザとバージョンをサポートが知るために、あれこれと受け答えしなければならないことも多くあります。
+この手間が、そのままサポートのための費用に直結し、さらにはエンジニアを疲弊させることにも繋がります。&lt;/p&gt;
+
+&lt;p&gt;他にも、本ケースにおいては、サポート対象のブラウザを利用しているにも関わらず、不具合が発生している可能性もあります。
+この場合、再現性のあるものであれば良いですが、必ずしもそうとも限りません。
+もしそのときのエラーログがあれば、かなり調査の助けになるのではないでしょうか。
+他、IEの互換モードを利用していたために発生した不具合だとか、考えるとキリがありません。&lt;/p&gt;
+
+&lt;p&gt;結果的に、可能な限り多くのブラウザ環境において、可能な限り確実にログを収集したいという欲求が生まれます。
+これが収集の目的となります。&lt;/p&gt;
+
+&lt;h1 id=&#34;手法&#34;&gt;手法&lt;/h1&gt;
+
+&lt;p&gt;ここでは、色々考えた中から、なるべく目的に沿う形で2つの手法について考察します。
+どちらの場合でも、サーバサイドではログを受け付けるREST APIのエンドポイントが存在する前提とします。&lt;/p&gt;
+
+&lt;h2 id=&#34;xmlhttprequestを用いる手法&#34;&gt;XMLHttpRequestを用いる手法&lt;/h2&gt;
+
+&lt;p&gt;Ajaxで有名なXMLHttpRequestを利用する方法です。
+モダンブラウザにおいては、XMLHttpRequestの仕様は共通化されてきているため、比較的多くのブラウザで簡単に利用することが可能です。
+RESTful APIのお作法に準じるような、HTTP POSTによってエンドポイントにログを投げつけることができます。&lt;/p&gt;
+
+&lt;h3 id=&#34;利点&#34;&gt;利点&lt;/h3&gt;
+
+&lt;p&gt;他のREST APIを呼ぶときと同様の実装をすることができ、全体として統一感を持たせられます。&lt;/p&gt;
+
+&lt;h3 id=&#34;欠点&#34;&gt;欠点&lt;/h3&gt;
+
+&lt;p&gt;ブラウザごとの実装差異をどうにかする必要があります。
+また、古めのブラウザではまともに動作しません。&lt;/p&gt;
+
+&lt;h2 id=&#34;imgタグを用いる手法&#34;&gt;IMGタグを用いる手法&lt;/h2&gt;
+
+&lt;p&gt;昔から存在するIMGタグのsrc属性を利用する方法です。
+私は今回、この方法が一番ベターだと判断しました。
+IE5互換モードでも安定して動作したため、ほとんどのブラウザで動くのではないでしょうか。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;new Image().src= loggingEndpoint + &#39;?&#39; + encodeURIComponent(message);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;利点-1&#34;&gt;利点&lt;/h3&gt;
+
+&lt;p&gt;かなり広範なブラウザで安定して動作します。
+また、実装もかなり単純です。&lt;/p&gt;
+
+&lt;h3 id=&#34;欠点-1&#34;&gt;欠点&lt;/h3&gt;
+
+&lt;p&gt;ブラウザによって、URLの長さに制約があることが欠点として挙げられます。
+またHTTP GETでログを投げることになるため、キャッシュ切りをする必要があるかもしれません。&lt;/p&gt;
+
+&lt;h1 id=&#34;実環境への適用&#34;&gt;実環境への適用&lt;/h1&gt;
+
+&lt;p&gt;実際にログを投げつける方法にどれを選んだとしても、JavaScript上でエラーが発生したことを補足しなければ、永遠にログを収集することはできません。
+エラーを捕捉するための基本的な戦略としては、 &lt;code&gt;window.onerror&lt;/code&gt; や &lt;code&gt;window.addEventListener&lt;/code&gt; を用いるようにします。
+JavaScriptはどうしてもページ単位でグローバルな領域であれこれする必要があるため、エラーイベントのハンドリングにも気を遣う必要が出てきます。&lt;/p&gt;
+
+&lt;p&gt;比較的最近のブラウザであれば、 &lt;code&gt;window.addEventListener(&#39;error&#39;, function(evt){})&lt;/code&gt; によって特に考慮なくエラーを捕捉することができます。
+しかし古めのブラウザになると、 &lt;code&gt;window.addEventListener&lt;/code&gt; は実装されていないため、 &lt;code&gt;window.onerror&lt;/code&gt; を利用する必要がありますが、これが結構曲者です。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;window.onerror&lt;/code&gt; は、ただ1つの関数しか持つことができず、意図せず上書きしてしまうとアプリケーションコードを破壊してしまいます。
+そのため、以下のフローにより上書きを行います。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;window.onerror&lt;/code&gt; に関数が登録されているかをチェック&lt;/li&gt;
+&lt;li&gt;登録されていれば変数に退避させる&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;window.onerror&lt;/code&gt; に関数を登録する&lt;/li&gt;
+&lt;li&gt;退避させた関数を、今回登録した関数内で呼ぶ&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;具体的には、以下のような実装となるはずです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;var myErrorHandler= function(message, url, ex){ /* ... */ };
+if(window.addEventListener)
+{
+    window.addEventListener(&#39;error&#39;, function(evt){
+        myErrorHandler.call(this, evt.message, evt.filename, evt);
+    }, false);
+}
+else
+{
+    var next= window.onerror || function(){};
+    window.onerror= function(){
+        myErrorHandler.apply(this, arguments);
+        next.apply(this, arguments);
+    };
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;まとめ&#34;&gt;まとめ&lt;/h1&gt;
+
+&lt;p&gt;JavaScriptのエラーログを収集する目的について述べ、実現するための2通りの手法について比較しました。
+改めて考えると、本記事の文脈においてはXMLHttpRequestを使う意義は薄いを言わざるを得ず、IMGタグによる収集しかないかな、と思います。&lt;/p&gt;
+
+&lt;p&gt;実際、ブラウザのエラーログを収集して損はないと思うので、今後Webサービスを作るのであれば必ず実装したほうが良いと思います。
+ログを収集しておけば、サポート対応時にアクセス時刻さえ聞けば問題の切り分けが大分捗ると思うので、開発時に多少手間でも実装したほうが後が楽です。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Gyazo APIについて</title>
+      <link>http://kamichidu.github.com/post/2016/02/09-about-gyazo-api/</link>
+      <pubDate>Tue, 09 Feb 2016 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2016/02/09-about-gyazo-api/</guid>
+      <description>&lt;p&gt;スクリーンショットをWeb上で共有するための&lt;a href=&#34;https://gyazo.com/&#34;&gt;Gyazo&lt;/a&gt;というサービスがあります。
+とても便利なサービスですから、プログラマの方は比較的よく使われているのではないでしょうか。&lt;/p&gt;
+
+&lt;p&gt;さて、このGyazoですが、もともと認証なしで簡単に画像をアップロードするためのAPI (upload.cgi) が用意されていました。
+また比較的最近のことではありますが、新しくREST APIが用意され、今後はそちらを使おうというお話になっています。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blogjp.gyazo.com/post/119404281733/gyazo-api%E3%81%A4%E3%81%84%E3%81%AB%E5%85%AC%E9%96%8B%E5%85%A8%E3%81%A6%E3%81%AE%E7%94%BB%E5%83%8F%E3%82%92gyazo%E3%81%97%E3%82%88%E3%81%86&#34;&gt;Gyazo API、ついに公開！全ての画像をGyazoしよう！&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;ですがこのAPIを使うためには認証が必要になっており、過去のAPIであったような認証なしで画像をアップロードできるようなAPIは見あたりません。
+今後はGyazoに画像をアップロードする際には、必ず認証を行う必要があるのでしょうか？&lt;/p&gt;
+
+&lt;p&gt;ちなみにREST APIを使う際にはOAuth認証が必要になっており、Gyazoへのユーザ登録が必要になります。
+ユーザ登録を行うためには、Gyazoに何かしらの画像をアップロードしなければならず、これでは堂々巡りになってしまいます。
+またお手軽さの面からも、可能であればupload.cgiを用いた画像アップロードをやりたいものですが、ドキュメントが存在するREST APIに対して、upload.cgiはドキュメントがありません。
+upload.cgiは今後廃止予定で、REST APIに一本化されるのか？&lt;/p&gt;
+
+&lt;p&gt;今回、Gyazoのサポートに問い合わせを行い、upload.cgiの廃止予定について聞いてみました。
+結論から言えば、upload.cgiは今後も廃止予定はなく、利用可能です。
+ただしAPIのエンドポイントについては、旧gyazo.comが新しくupload.gyazo.comになるとのことです。
+旧エンドポイントは、今後廃止される予定とのことで、新エンドポイントでは今までと同様にupload.cgiが使えるということでした。&lt;/p&gt;
+
+&lt;p&gt;上記のような質問に対してご返答いただきましたGyazoサポートチームに、この場を借りてお礼を述べさせていただきます。
+とても便利なサービスを提供していただいて、大変感謝しております。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ProjectLをPlay storeで公開しました</title>
+      <link>http://kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store/</link>
+      <pubDate>Wed, 09 Dec 2015 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store/</guid>
+      <description>&lt;p&gt;以前から開発していたAndroid用Lingr Clientである&amp;rdquo;ProjectL&amp;rdquo;を、先日Play storeで公開しました。
+&lt;a href=&#34;https://play.google.com/store/apps/details?id=akechi.projectl&#34;&gt;こちら&lt;/a&gt;からどうぞ。
+開発版は&lt;a href=&#34;https://dply.me/epmlks&#34;&gt;deploygateから配布をしていました&lt;/a&gt;が、今回正式にPlay storeに登録しましたので、今後導入が楽になるかと思います。&lt;/p&gt;
+
+&lt;p&gt;現在のバージョンは0.0.0。
+搭載機能は以下:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;過去ログ閲覧機能&lt;/p&gt;
+
+&lt;p&gt;ないと困るやつ。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;画像のインライン展開機能&lt;/p&gt;
+
+&lt;p&gt;設定画面から有効化する必要があります。
+Web版のLingrのように、画像がポストされると自動で展開します。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;通知機能&lt;/p&gt;
+
+&lt;p&gt;設定画面から正規表現を登録しておく必要があります。
+登録した正規表現にマッチするメッセージが購読している部屋にポストされた段階で通知が来ます。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;10部屋制限突破機能&lt;/p&gt;
+
+&lt;p&gt;設定画面から部屋IDの一覧を登録しておく必要があります。
+表示される部屋一覧が、設定画面で登録したものになり、Lingrの10部屋制限を突破することができます。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;(隠し機能)&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;他細かい機能はありますが、記載は省略します。
+どうぞみなさん使ってみてください。
+改善要望やバグ報告は、githubのissuesで管理していますので、&lt;a href=&#34;https://github.com/akechi/project-l/issues&#34;&gt;こちら&lt;/a&gt;からお願いします。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;少し寂しいので、開発の経緯を書こうと思います。&lt;/p&gt;
+
+&lt;p&gt;私はもともとkanno_kannoさんが開発されたLingrPocketのユーザでした。
+ですがある日、LingrPocketがPlay storeから削除されていました。
+LingrPocket自体はまだ私の端末上にありましたが、今後端末を変更したりした際にインストールできないなと思い、DIYの精神で開発を始めました。&lt;/p&gt;
+
+&lt;p&gt;テストに協力していただいた方々にはとても感謝しています。
+またTukushiGamoさんにはアイコンも作っていただいているので、足を向けて眠れないなという感じです。&lt;/p&gt;
+
+&lt;p&gt;LingrPocketは現在Play storeに復活していますが、kanno_kannoさん自身今後アップデートする予定はないということです。
+LingrPocketには今まで非常にお世話になったので、Play storeに復活したこと自体がとても嬉しいです。&lt;/p&gt;
+
+&lt;p&gt;ProjectLの今後のロードマップは予定は未定状態ですが、現在要望もらっている機能は一通り実装しようかと思っています。
+今後のこと考えると、ソースコードの整理も急ぎ目でやらないといけないのですが、仕事とプライベートが急がしくあまり開発の時間を取れておりません。
+おいおい色々やっていこうと思います。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>高速なVim Plug-inについての一考察</title>
+      <link>http://kamichidu.github.com/post/2015/12/06-vim-speed-consideration/</link>
+      <pubDate>Sun, 06 Dec 2015 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2015/12/06-vim-speed-consideration/</guid>
+      <description>
+
+&lt;p&gt;この記事はVim Advent Calendar 2015の6日目の記事です。
+前日は&lt;a href=&#34;http://qiita.com/daisuzu&#34;&gt;daisuzu&lt;/a&gt;さんによる&lt;a href=&#34;http://daisuzu.hatenablog.com/entry/2015/12/05/002129&#34;&gt;VimのCTRL-X補完について&lt;/a&gt;でした。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;さて、この記事ではVimにおけるVim Plug-inについての速度というものをテーマに、あれこれ考察を述べたいと思います。
+一般的なソフトウェアの速度についての話から、Vim Plug-inにおける速度は何か、を掘り下げて考えてみることを目的にします。
+また話を単純にするため、UnixにおけるCUI Vimの話のみします。&lt;/p&gt;
+
+&lt;p&gt;※記載や認識が間違っている箇所がありましたら教えていただけると喜びます。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;一般的なソフトウェアにおける速度について&#34;&gt;一般的なソフトウェアにおける速度について&lt;/h2&gt;
+
+&lt;p&gt;一般的にソフトウェアにおける速度とは、スループットとレイテンシ、応答時間とで語られることが多いと思います。&lt;/p&gt;
+
+&lt;p&gt;スループットは、単位時間あたりにソフトウェアが処理可能なデータ量を指します。
+具体的な意味については&lt;a href=&#34;https://ja.wikipedia.org/wiki/%E3%82%B9%E3%83%AB%E3%83%BC%E3%83%97%E3%83%83%E3%83%88&#34;&gt;Wikipedia:スループット&lt;/a&gt;を参照していただくことにします。&lt;/p&gt;
+
+&lt;p&gt;レイテンシは、ユーザの入力時点からソフトウェアが応答を返し、実際にユーザへと表示されるまでの時間を指します。
+こちらも具体的な意味については&lt;a href=&#34;https://ja.wikipedia.org/wiki/%E3%83%AC%E3%82%A4%E3%83%86%E3%83%B3%E3%82%B7&#34;&gt;Wikipedia:レイテンシ&lt;/a&gt;を参照してください。&lt;/p&gt;
+
+&lt;p&gt;応答時間は、ユーザの入力時点からソフトウェアが応答を返し始めるまでの時間を指します。
+こちらも具体的な意味については&lt;a href=&#34;https://ja.wikipedia.org/wiki/%E5%BF%9C%E7%AD%94%E6%99%82%E9%96%93&#34;&gt;Wikipedia:応答時間&lt;/a&gt;を参照してください。&lt;/p&gt;
+
+&lt;h2 id=&#34;vim-plug-inにおける速度とは&#34;&gt;Vim Plug-inにおける速度とは&lt;/h2&gt;
+
+&lt;p&gt;ここでVim Plug-inにおける速度について考えていきます。
+Vimはテキストエディタであり、使用する目的はテキストを編集することだと信じています。
+また、Vimの目的から言えば、Vim Plug-inの目的とはテキストの編集を補助することだと言えるかもしれません。
+きっと。多分。 I HOPE SO.&lt;/p&gt;
+
+&lt;p&gt;テキストを編集するという行為においての速度を気にする場面として、大きく以下のパターンに分けられるのではないでしょうか。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Vimを起動するとき&lt;/li&gt;
+&lt;li&gt;編集作業を行っているとき&lt;/li&gt;
+&lt;li&gt;マクロ等でテキストを一括処理しているとき&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;以下、各パターンそれぞれについて、速度とは何かを考えてみます。&lt;/p&gt;
+
+&lt;h3 id=&#34;vimを起動するとき&#34;&gt;Vimを起動するとき&lt;/h3&gt;
+
+&lt;p&gt;我々は今端末にいます。
+「さあ、編集を始めよう&amp;hellip;！」と思い立ち、または必要にかられ、我々は端末に &lt;code&gt;vim path/to/file&lt;/code&gt; と打ち込み、華麗にReturnをえぐります。&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;さくっと起動しなかったら、嫌ですよね？
+Vimの起動時における速度とは、単純にReturnをえぐり込んでからVimの画面が表示され、編集を開始できる状態になるまでの時間と考えることができそうです。
+つまり、一般的な議論における応答速度にあたると言えそうです。&lt;/p&gt;
+
+&lt;h3 id=&#34;編集作業を行っているとき&#34;&gt;編集作業を行っているとき&lt;/h3&gt;
+
+&lt;p&gt;我々は今Vimでの編集を行っています。
+ふと天啓が降りてきて、唐突に &lt;code&gt;public static final String RENBAN_KAISHI= 0;&lt;/code&gt; とテキストを打ち込もうとします。&lt;/p&gt;
+
+&lt;p&gt;p &amp;hellip; u &amp;hellip; b &amp;hellip; l &amp;hellip; c &amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;1文字打ち込むごとに、ラグがあったら嫌ですよね？
+編集作業を行っている際の速度とは、1文字打ち込んでから次の文字を打ち込めるようになるまでの時間と考えることができそうです。
+また、文字が打ち込めても画面に反映されていない状態だとどうにもならないので、文字を打ち込み、画面に反映され、次の文字が打ち込めるようになるまで、と考えて問題ないかと思います。
+つまり、一般的な議論におけるレイテンシにあたると言えそうです。&lt;/p&gt;
+
+&lt;h3 id=&#34;マクロ等でテキストを一括処理しているとき&#34;&gt;マクロ等でテキストを一括処理しているとき&lt;/h3&gt;
+
+&lt;p&gt;我々は今、巨大なファイルに対して定型処理を行う必要に迫られています。
+一度きりしか使わないけどスクリプトを書いて処理するか、それとも血の滲むような努力を前提として手動で行うか&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;「そうだ、マクロ使えばいいじゃん」&lt;/p&gt;
+
+&lt;p&gt;「そうだ、Vim scriptでやっちゃおう」&lt;/p&gt;
+
+&lt;p&gt;天啓を得た我々は、早速取りかかります。
+マクロができたので、早速実行をします。&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip;&amp;hellip;&amp;hellip;. (10分後) &amp;hellip; 「いつ終わるのか」&lt;/p&gt;
+
+&lt;p&gt;Vim scriptができたので、早速実行をします。&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip;&amp;hellip;&amp;hellip;. (10分後) &amp;hellip; 「いつ終わるのか」&lt;/p&gt;
+
+&lt;p&gt;時間がかかるなら待ちますが、あまり長い時間は待ちたくないですよね？
+古の夜間コンパイルなど2015年の今になっては、ぞっとしない話です。
+テキストを一括処理する際の速度とは、単純に処理開始から処理終了までの時間と考えることができそうです。
+もちろん、ユーザの体感速度を向上させるために非同期で処理するや進捗を表示するといった工夫はできますが、こと速度の議論においては意味を持ちません。
+つまり、一般的な議論におけるスループットにあたると言えそうです。&lt;/p&gt;
+
+&lt;h2 id=&#34;高速なvim-plug-inとは&#34;&gt;高速なVim Plug-inとは&lt;/h2&gt;
+
+&lt;p&gt;ここまででVim Plug-inにおける速度とは何か、ということを考えてきました。
+結果的に、速度と一口に言っても、その文脈に応じて意味あいや目的とすることが変わってくることがわかってきました。
+つまり単に「高速な」Vim Plug-inと言ったときに、その意味するところは大きく違ってきそうです。
+高速なVim Plug-inについて考えるときは、そのVim Plug-inがどういった目的のものなのかをよく考える必要がありそうです。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/thinca/vim-quickrun&#34;&gt;thinca/vim-quickrun&lt;/a&gt;を例に速度を考察してみます。
+vim-quickrunの目的と、目的に応じた速度とは、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;編集中のバッファをカジュアルに実行し、結果を別バッファに表示する&lt;/p&gt;
+
+&lt;p&gt;実行を開始してから、別バッファが開くまたは結果がなるべく早く表示されることが重要かと思います。
+これは応答速度の概念が適当かと思います。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;編集を中断させない&lt;/p&gt;
+
+&lt;p&gt;バックグラウンドで動いているプロセスから出力を受け取ってバッファへと書き出す必要性から、定期的にポーリングを行っています。
+ポーリング処理を行っている際はどうしてもVimをブロックせざるを得ないため、レイテンシの概念が適当かと思います。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;となります。
+(間違ってたらゴメンナサイ。)
+つまり「vim-quickrunを高速にしたい！」と考えた場合、応答速度を求めるのかレイテンシを求めるのかを切り分けた上でアプローチをする必要があります。&lt;/p&gt;
+
+&lt;h2 id=&#34;まとめ&#34;&gt;まとめ&lt;/h2&gt;
+
+&lt;p&gt;ここまでで、Vim Plug-inにおける速度とは何か、というテーマで真面目に考えてみました。
+Vim Plug-inにおける速度とは、Vim Plug-inの目的によって様々な視点で考えられること、Vim Plug-inの目的に応じた適当なアプローチをすることが重要であることがわかりました。
+スループット、レイテンシ、応答時間のいずれが重要なのかを適当に見極め、適当なアプローチを実施することによって世界は高速なVim Plug-inで溢れることを期待してやみません。&lt;/p&gt;
+
+&lt;h2 id=&#34;付録&#34;&gt;付録&lt;/h2&gt;
+
+&lt;p&gt;ここまでで速度について抽象的な話をしてきましたが、じゃあ実際にどうするのっていう方法論について書いてみます。
+あくまでも参考程度に考えていただき、今まで話をしてきたように目的に応じて都度都度適当なアプローチや方法論を探る必要があることは意識してください。&lt;/p&gt;
+
+&lt;h3 id=&#34;応答時間を向上させるには&#34;&gt;応答時間を向上させるには&lt;/h3&gt;
+
+&lt;p&gt;応答時間を向上させるためには、大きく以下のアプローチがあるかと思います。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;そもそも処理をしない&lt;/p&gt;
+
+&lt;p&gt;アルゴリズムの見直しにより処理をなくす、ないし減らすことで応答時間は向上します。
+また、キャッシングの導入によっても向上はしますが、キャッシングのメリット/デメリットやその効果を見極めて慎重に導入する必要があります。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;処理を遅延させ、必要になった段階で実行する&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/Shougo/neobundle.vim&#34;&gt;Shougo/neobundle.vim&lt;/a&gt;ではLazy Loadingとして実装されているものです。
+みなさま馴染みがあるのではないでしょうか。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;処理を非同期で行い、必要になった段階で該当処理が終了しているか判定し、終了していなければ待つ&lt;/p&gt;
+
+&lt;p&gt;実装が面倒ですが、場合によっては効果があります。
+例えばVim起動時に非同期で外部プロセスを走らせておき、特定のFileTypeに変更されたときに外部プロセスの終了を待つなどができます。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;スループットを向上させるには&#34;&gt;スループットを向上させるには&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;そもそも処理をしない&lt;/li&gt;
+&lt;li&gt;キャッシングの導入&lt;/li&gt;
+&lt;li&gt;処理を非同期で行い、複数の処理を並列で処理する&lt;/li&gt;
+&lt;li&gt;実行速度の速い言語で実装する&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;レイテンシを向上させるには&#34;&gt;レイテンシを向上させるには&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;がんばる (力尽きた)(復活したら何か書くかもしれない)&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>PHPでの開発環境構築メモ</title>
+      <link>http://kamichidu.github.com/post/2015/06/17-075721/</link>
+      <pubDate>Wed, 17 Jun 2015 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2015/06/17-075721/</guid>
+      <description>
+
+&lt;p&gt;つい昨日のことですが、PHPでの開発環境を行ったので、メモがてら。&lt;/p&gt;
+
+&lt;p&gt;手順だけはQiitaを参照。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://qiita.com/kamichidu/items/384eecdf4df73b99fa84&#34;&gt;http://qiita.com/kamichidu/items/384eecdf4df73b99fa84&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;phpのバージョン&#34;&gt;PHPのバージョン&lt;/h2&gt;
+
+&lt;p&gt;特に理由がないなら、現状の最新版を使うといいと思います。
+&lt;a href=&#34;https://registry.hub.docker.com/&#34;&gt;Docker Hub&lt;/a&gt;には、&lt;a href=&#34;https://registry.hub.docker.com/_/php/&#34;&gt;PHP公式イメージ&lt;/a&gt;が提供されているのでとても助かりました。&lt;/p&gt;
+
+&lt;p&gt;公式イメージには、以下のバージョンがあるみたい。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;5.4.42-cli, 5.4-cli, 5.4.42, 5.4 (5.4/Dockerfile)&lt;/li&gt;
+&lt;li&gt;5.4.42-apache, 5.4-apache (5.4/apache/Dockerfile)&lt;/li&gt;
+&lt;li&gt;5.4.42-fpm, 5.4-fpm (5.4/fpm/Dockerfile)&lt;/li&gt;
+&lt;li&gt;5.5.26-cli, 5.5-cli, 5.5.26, 5.5 (5.5/Dockerfile)&lt;/li&gt;
+&lt;li&gt;5.5.26-apache, 5.5-apache (5.5/apache/Dockerfile)&lt;/li&gt;
+&lt;li&gt;5.5.26-fpm, 5.5-fpm (5.5/fpm/Dockerfile)&lt;/li&gt;
+&lt;li&gt;5.6.10-cli, 5.6-cli, 5-cli, cli, 5.6.10, 5.6, 5, latest (5.6/Dockerfile)&lt;/li&gt;
+&lt;li&gt;5.6.10-apache, 5.6-apache, 5-apache, apache (5.6/apache/Dockerfile)&lt;/li&gt;
+&lt;li&gt;5.6.10-fpm, 5.6-fpm, 5-fpm, fpm (5.6/fpm/Dockerfile)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;5.4、5.5、5.6系をそれぞれ選べて、しかも最初からApacheまでついてくるのは楽で良いですね。
+今回は、5.6-apacheを使いました。
+docker pull php:5.6-apacheでDocker HubからイメージをPullしてくる。&lt;/p&gt;
+
+&lt;h2 id=&#34;依存ライブラリの管理&#34;&gt;依存ライブラリの管理&lt;/h2&gt;
+
+&lt;p&gt;今までPHPは、メンテとか開発途中での引き継ぎとかで、自分で構築はやったことなかった。
+今回はSmartyとAWS SDKを使いたかったので、依存管理についてちょっと調べた。
+&lt;a href=&#34;https://getcomposer.org/&#34;&gt;Composer&lt;/a&gt;が便利っぽい。
+どうでもいいけど、PHPって音楽っぽい名前が多いよね。&lt;/p&gt;
+
+&lt;p&gt;composerはデフォルトでプロジェクトローカルへのインストールになります。
+インストールすると、composer.pharという実行可能ファイルがカレントディレクトリに作成されますので、これを使う。
+composer.jsonに、依存ライブラリを書いていき、./composer.phar installでプロジェクトローカルにインストールができる。
+依存関係インストールすると、composer.lockというありがちなファイルができる。&lt;/p&gt;
+
+&lt;p&gt;諸説あるみたいだけど、Composerを使う上では、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;composer.phar&lt;/li&gt;
+&lt;li&gt;composer.json&lt;/li&gt;
+&lt;li&gt;composer.lock&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;をバージョン管理しておいたほうが良さそう。
+理由は気が向いたら書く。&lt;/p&gt;
+
+&lt;p&gt;一旦以上。
+多分あとで記載内容に修正入れると思う。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>goの開発環境を整える</title>
+      <link>http://kamichidu.github.com/post/2015/04/24-gogogo/</link>
+      <pubDate>Fri, 24 Apr 2015 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2015/04/24-gogogo/</guid>
+      <description>
+
+&lt;p&gt;最近ちょいちょいGoで遊んでいます。
+その際に、環境構築周りでなんとなく作ったルールがあるので紹介します。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;処理系は~/local/にインストールする&lt;/p&gt;
+
+&lt;p&gt;インストール用のスクリプト&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;でビルドしてインストールを行います。
+実行すると自動的にGo-1.4.2をユーザランドにインストールします。
+なお、GOROOTは基本的にGoのバイナリに組み込まれていますが、常に指定するようにしています。&lt;/p&gt;
+
+&lt;p&gt;yaourt -Sy go とかで入れるのは楽なんですが、ここは好みですね。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;依存関係のライブラリは、各プロジェクトディレクトリ以下にインストールする&lt;/p&gt;
+
+&lt;p&gt;個人的にはこれすごい大事で、各プロジェクトごとの依存関係を管理するのに役立ちます。
+~/.go/等に複数のプロジェクトの依存関係を入れてしまうと、他のプロジェクトのために入れたpackageの影響でビルドがコケたりコケなかったりします。
+各プロジェクトごとにGOPATHを切っておくと、そのへんの確認であったり管理が楽になります&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:1&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;。&lt;/p&gt;
+
+&lt;p&gt;export GOPATH=$(pwd)/.go/ してから go get github.com/some/thing とかすると、.go/以下にインストールされます。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Goはとてもクロスコンパイルが簡単なので、可能な限りCIサービスと連携して複数プラットフォーム用のバイナリを吐いておく&lt;/p&gt;
+
+&lt;p&gt;開発というより、使ってもらう際の利点となります。
+よくある「linuxはビルド簡単にできるからいいんだけど、windowsでビルドするのたるい&amp;hellip;」という状況を軽減できます。
+Goはクロスコンパイルが死ぬほど楽なので、 .travis.yml 等からクロスコンパイルする設定を入れておくと、簡単に他の人に試してもらうことができるので楽です。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;以上のルールにより、以下のご利益があります。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;複数のプロジェクト間で依存関係が切り分けることができる&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Goの複数バージョンを簡単に変更できる&lt;/p&gt;
+
+&lt;p&gt;要するに*env系が中でやってることをそのままやる感じですけど、現状Goに決定版のようなツールはないため、当面このやり方でいくか、または何か作ろうかと思ってます。
+ただし、GOROOTはバイナリに埋め込まれるため、単にPATHの切り替えだけでいいのですが、まぁ面倒なので。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;便利&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;みんなGoやればいいと思うよ。
+私はGoやって楽しいです。(構文はちょっと好みではないけど。)&lt;/p&gt;
+
+&lt;h2 id=&#34;付録&#34;&gt;付録&lt;/h2&gt;
+
+&lt;h3 id=&#34;goの環境変数&#34;&gt;Goの環境変数&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;GOROOT&lt;/p&gt;
+
+&lt;p&gt;Goの処理系をインストールしたディレクトリを指定する。
+Goのバイナリ中に埋め込まれるため、bashから echo $GOROOT して何も表示されなくても、 echo $(go env GOROOT) すると表示されるかと思います。
+Goの標準packageは $GOROOT 以下に入っています。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;GOPATH&lt;/p&gt;
+
+&lt;p&gt;標準packageでないpackageがインストールされるディレクトリを指定します。
+go get hoge/fuga とすると、 $GOPATH/src/ 以下にpackageがインストールされます。
+また、 $GOPATH/bin/ 以下には、 go get で入れたpackageのバイナリが格納されます。&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;goのインストールスクリプト&#34;&gt;Goのインストールスクリプト&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sh&#34;&gt;pushd $TEMP
+# github releasesはリダイレクションされるため、-Lをつける必要がある
+curl -o go1.4.2.tar.gz -L https://github.com/golang/go/archive/go1.4.2.tar.gz
+tar -xzvf go1.4.2.tar.gz
+if [ ! -d ~/local/go/ ]; then
+    mkdir -p ~/local/go/
+fi
+mv go-go1.4.2/ ~/local/go/1.4.2/
+popd
+
+if [ ! -f ~/local/go/default/ ]; then
+    ln -s ~/local/go/1.4.2/ ~/local/go/default/
+fi
+
+export GOROOT=~/local/go/default/
+export PATH=$GOROOT/bin/:$PATH
+
+pushd ~/local/go/1.4.2/src/
+./make.bash
+popd
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;Goならそういう管理いらないよ！という意見は欲しい。そこまで把握できている訳ではないので。
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:1&#34;&gt;Goならそういう管理いらないよ！という意見は欲しい。そこまで把握できている訳ではないので。
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>すろっくとゆかいななかまたちの技術系勉強会.vol1に参加してきました</title>
+      <link>http://kamichidu.github.com/post/2015/03/08-srockstudy-vol1/</link>
+      <pubDate>Sun, 08 Mar 2015 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2015/03/08-srockstudy-vol1/</guid>
+      <description>&lt;p&gt;去る2015年2月28日 (土) に、上述の勉強会に参加してPostgreSQLについて発表してきました。
+発表内容としては、PostgreSQLの簡単な紹介とSQLのISO規格なんかについてちょろっと話したくらいです。
+発表中で、PostgreSQLに標準のレプリケーション用のツールがないと言ったところ、みんな喜んでマサカリ飛ばしてきたのが印象的でした (とーるさんとかぱんださんとか) 。
+知識が古かったようです (下調べしろよって話もある) 。&lt;/p&gt;
+
+&lt;p&gt;発表したスライドは&lt;a href=&#34;https://docs.google.com/presentation/d/14ptXJWyO6HLjwHzFb9SKIEzRF0wNo09ng_-cHDpTpP0/edit?usp=sharing&#34;&gt;こちら&lt;/a&gt;で見られるようにしてあります。&lt;/p&gt;
+
+&lt;p&gt;その後は主催のすろっくさんが頭の悪そうなマネージャ役を演じており、色々とあれなDBをマシにするというハンズオンをしました。
+ものすごく久し振りに、まともなDB設計のお話をした気がします。
+ぱんださんに多謝。&lt;/p&gt;
+
+&lt;p&gt;懇親会では何人かの方とお話させていただいたりしました。
+すみません、私人見知りするのであまりうまく話ができたかは定かではありません。&lt;/p&gt;
+
+&lt;p&gt;記憶がかなりあやふやになっておりますが、簡単な感想ということで。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Vimの正規表現を切り刻む</title>
+      <link>http://kamichidu.github.com/post/2014/12/20-parse-vim-regex/</link>
+      <pubDate>Sat, 20 Dec 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2014/12/20-parse-vim-regex/</guid>
+      <description>
+
+&lt;p&gt;この記事はVim Advent Calendar 2014の20日目の記事です。&lt;/p&gt;
+
+&lt;p&gt;19日目はthleapさんによる&lt;a href=&#34;http://chroma.hatenablog.com/entry/2014/12/19/224359&#34;&gt;マークアップや文章の編集をちょっと楽にする&lt;/a&gt;でした。&lt;/p&gt;
+
+&lt;h2 id=&#34;導入&#34;&gt;導入&lt;/h2&gt;
+
+&lt;p&gt;みなさん、正規表現、使ってますか？
+私は毎日使っています。
+特にVimの正規表現、かなり変態で良さがありますよね。&lt;/p&gt;
+
+&lt;p&gt;ところでPerlには、&lt;a href=&#34;https://metacpan.org/pod/Regexp::Assemble&#34;&gt;Regexp::Assemble&lt;/a&gt;という非常に便利なモジュールがあります。
+この子は何をする子かというと、自動で最適化された正規表現を生成してくれます。
+正規表現のマッチングでは、うまくトライ木を作ることができれば、かなりマッチング速度が向上しますので、自動でそれをやってくれるモジュールと言えばわかりやすいでしょうか。
+(いわゆるtrie optimization)&lt;/p&gt;
+
+&lt;p&gt;例えば、&amp;rdquo;public&amp;rdquo;、&amp;rdquo;protected&amp;rdquo;、&amp;rdquo;private&amp;rdquo;という3つの単語についてマッチする正規表現は、
+純粋に&lt;code&gt;public|protected|private&lt;/code&gt;と書けば良いのですが、これだと遅いので&lt;code&gt;(?:p(?:ublic|r(?:otected|ivate)))&lt;/code&gt;と書いたほうが速いので、こう書きましょうよってことです。&lt;/p&gt;
+
+&lt;p&gt;ここから本題。
+Regexp::Assembleのように、自動で正規表現を最適化するためには、まず正規表現を切り刻まなければなりません。
+この記事では、正規表現を切り刻んで遊んでみることにします。&lt;/p&gt;
+
+&lt;h2 id=&#34;下準備&#34;&gt;下準備&lt;/h2&gt;
+
+&lt;p&gt;正規表現を切り刻む、Vim scriptコードを用意します。
+以下を手元で実行し、&lt;code&gt;RegexpTokenize&lt;/code&gt;コマンドを使えるようにしてください。&lt;/p&gt;
+
+&lt;p&gt;(簡単のため、一部の正規表現にしか対応させてません。)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;function! s:tokenize(expr)
+    let [chars, i]= [split(a:expr, &#39;\zs&#39;), 0]
+    let tokens= []
+    while i &amp;lt; len(chars)
+        let ch= chars[i]
+
+        if ch ==# &#39;\&#39;
+            if !(i &amp;lt; len(chars))
+                break
+            endif
+
+            let i+= 1
+            let ch= chars[i]
+
+            if ch ==# &#39;+&#39;
+                let tokens+= [&#39;\+&#39;]
+            elseif ch ==# &#39;=&#39; || ch ==# &#39;?&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==# &#39;(&#39;
+                let tokens+= [&#39;\(&#39;]
+            elseif ch ==# &#39;)&#39;
+                let tokens+= [&#39;\)&#39;]
+            elseif ch ==? &#39;m&#39; || ch ==? &#39;v&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==? &#39;c&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==? &#39;i&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==? &#39;k&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==? &#39;f&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==? &#39;p&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==? &#39;s&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==? &#39;d&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==? &#39;x&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==? &#39;o&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==? &#39;w&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==? &#39;h&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==? &#39;a&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==? &#39;l&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            elseif ch ==? &#39;u&#39;
+                let tokens+= [&#39;\&#39; . ch]
+            else
+                throw printf(&amp;quot;Unsupported regex: `%s&#39;&amp;quot;, a:expr)
+            endif
+        else
+            let tokens+= [ch]
+        endif
+
+        let i+= 1
+    endwhile
+    return tokens
+endfunction
+
+command!
+\   -nargs=1
+\   RegexpTokenize
+\   echo s:tokenize(&amp;lt;q-args&amp;gt;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;切り刻め&#34;&gt;切り刻め！&lt;/h2&gt;
+
+&lt;p&gt;以下のコマンドを実行してみましょう。
+切り刻まれ、正規表現単位に分割された文字列が表示されます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;&amp;quot; =&amp;gt; [&#39;h&#39;, &#39;o&#39;, &#39;g&#39;, &#39;e&#39;, &#39;\(&#39;, &#39;\w&#39;, &#39;\+&#39;, &#39;\)&#39;, &#39;\?&#39;]
+RegexpTokenize hoge\(\w\+\)\?
+&amp;quot; =&amp;gt; [&#39;p&#39;, &#39;u&#39;, &#39;b&#39;, &#39;l&#39;, &#39;i&#39;, &#39;c&#39;]
+RegexpTokenize public
+&amp;quot; =&amp;gt; [&#39;\d&#39;, &#39;\+&#39;]
+RegexpTokenize \d\+
+&amp;quot; =&amp;gt; [&#39;\d&#39;, &#39;\+&#39;, &#39;\(&#39;, &#39;,&#39;, &#39;\d&#39;, &#39;\+&#39;, &#39;\)&#39;, &#39;\=&#39;]
+RegexpTokenize \d\+\(,\d\+\)\=
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;最後に&#34;&gt;最後に&lt;/h2&gt;
+
+&lt;p&gt;この記事で書いたようなことをするライブラリとして、&lt;a href=&#34;https://github.com/kamichidu/vim-regexp-assemble&#34;&gt;vim-regexp-assemble&lt;/a&gt;というものを作成しております。
+切り刻みたいだけなら、Vital.Regexp.Lexerを使えばそれで終わってしまいますし、この記事に記載した一部の正規表現だけでなく、Vimの正規表現すべてに対して対応しています。&lt;/p&gt;
+
+&lt;p&gt;(help整備したら&lt;a href=&#34;https://github.com/vim-jp/vital.vim&#34;&gt;vital本家&lt;/a&gt;に入れてもらうかもしれませんが、ちょっと先の話になりそう。)&lt;/p&gt;
+
+&lt;p&gt;みなさんもっと正規表現で遊びましょう。
+ということで、20日目の記事を終わりたいと思います。
+明日はmitsuseさんです。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>VimConf2014で発表してきた</title>
+      <link>http://kamichidu.github.com/post/2014/11/02-vimconf2014/</link>
+      <pubDate>Sun, 02 Nov 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2014/11/02-vimconf2014/</guid>
+      <description>&lt;p&gt;昨日になりますが、&lt;a href=&#34;http://vimconf.vim-jp.org/2014/&#34;&gt;VimConf2014&lt;/a&gt;に参加し、発表をしてきました。
+人生初の勉強会での発表だったので、非常に緊張しましたが、無事発表を終えることができました。
+終わった後になって、やっぱり少しは発表練習するべきだったか、とか、スライドもう少し凝れば良かったとか、反省点は色々出てきました。
+感想などをつらつらと。&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip; Now Loading&lt;/p&gt;
+
+&lt;p&gt;当初は10:00に会場へ行くつもりだったんですが、体温がなかなか上がらなかったため家を出られず、11:30に会場へ着きました。
+着いて早々、derisさんとraaさんと共にラーメン凪へ。
+黒マー油を頼みましたが、イカスミで真っ黒に染まったラーメンがとても美味しかったです。&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip; Now Loading&lt;/p&gt;
+
+&lt;p&gt;最初はkoronさんによる&lt;a href=&#34;http://koron.github.io/vimconf-2014-koron/&#34;&gt;Identity of the Vim&lt;/a&gt;でした。
+かなり熱いお話で、非常に頷ける内容が多かったです。
+Vimを始めてから色々な言語に触る機会が増え、同時に技術的に色々なものに触れる機会が増えた経験があったため、共感する部分が多かったです。
+JavaだけいじりたいならEclipse使えっていう内容も、非常に同意。
+無理にVim使う必要なんかない。
+私の場合、Vimの操作が手に馴染んでしまい、Eclipseは便利だと思いつつも生産性はVimのほうが高いため、Vimでやってます。
+でもやっぱりEclipseの機能が、Vimでも使いたいため、Java用のpluginを色々開発してたりする訳ですが。&lt;/p&gt;
+
+&lt;p&gt;続いてujihisaさんによる&lt;a href=&#34;https://docs.google.com/presentation/d/1u5A7F3Kd4XwJlIUQZAVmrwWfLcoLf9NURtqAEafi_oo/edit#slide=id.p&#34;&gt;PM2&lt;/a&gt;でした。
+Civ5やろうっていうお話でした。
+PM2に対する喜びの声に対して、私の登場率が高かったです。というか100%？&lt;/p&gt;
+
+&lt;p&gt;休憩を挟み、Lindaさんによる&lt;a href=&#34;https://speakerdeck.com/rhysd/vimconf-2014-f&#34;&gt;f&lt;/a&gt;でした。
+f拡張プラグインについてのお話。
+私はvim標準のfマッピングで満足しているので、あまり使おうとは思いませんが、何かのときには参考にしたいなーと。&lt;/p&gt;
+
+&lt;p&gt;で、私による&lt;a href=&#34;https://docs.google.com/presentation/d/1zaPy82NJ6A3Iw1llKqU-lX88AJNt1EKy5O15nOp085c/edit#slide=id.p&#34;&gt;Hey, Java! Vim is coming.&lt;/a&gt;でした。
+手持ちのChromebookだと、プロジェクタを認識せずにLindaさんにPCをお借りしての発表になりました。
+Lindaさんありがとうございました。
+発表内容自体については、喋りたい内容の1割くらいは喋れたように思えます。
+ですがもう少し色々と内容を練ればよかったなーと反省しています。
+結局やっぱり、Java編集するならEclipseが便利で、InteliJやNetBeans等のIDEがやはり王道な訳です。
+で、Vim使ってやりたいと思ったときにpluginを作成している訳ですが、pluginを作成するときにJavaならでは？の敵が待ち受けています。
+じゃあどうするの、とか、他にも色々掘り進んだ話をしたいですので、次回のVimConfではJavaとVimに関する話をしたいと思いました。&lt;/p&gt;
+
+&lt;p&gt;cohamaさんによる&lt;a href=&#34;http://www.slideshare.net/cohama/auto-closing-parenthesis-vim-conf2014-41290298&#34;&gt;auto closing parenthesis&lt;/a&gt;では、cohamaさん作のleximaや他の括弧自動入力系pluginのお話でした。
+個人的には、括弧自動入力については思考と指を乱されるため、好んでは使わないです。
+ですがEclipseを使う同僚の話を聞くと、括弧自動入力は便利で欠かせないと言う人も多いです。
+leximaは&amp;rdquo;.&amp;ldquo;リピートが可能なので、vimらしいpluginではないかと思います。&lt;/p&gt;
+
+&lt;p&gt;その後、derisさんによる&lt;a href=&#34;http://www.slideshare.net/deris0126/vimconf4&#34;&gt;怖くないマクロ入門&lt;/a&gt;でした。
+懇親会のお寿司を受け取りに出ていたりで、あまり聞けてないです。
+マクロ漁船に乗りたくなってしまいそうなお話だった記憶です。&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip; Now Loading&lt;/p&gt;
+
+&lt;p&gt;休憩を挟んで後、thincaさんによる&lt;a href=&#34;https://gist.github.com/thinca/2cf4ae0df88a99423c9d&#34;&gt;Test for Vim script&lt;/a&gt;でした。
+ライブコーディングが非常に便利でした。
+最近はvim scriptのテストにはthemisを使わせてもらっています。&lt;/p&gt;
+
+&lt;p&gt;続いてShougoさんによる&lt;a href=&#34;http://www.slideshare.net/Shougo/lets-talk-about-neovim&#34;&gt;Let&amp;rsquo;s talk about neovim&lt;/a&gt;。
+私はあまりneovimを追いかけていないのですが、neovimの話題は楽しみました。
+テキストエディタってなんぞや、という哲学的な問いがありました。&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip; Now Loading&lt;/p&gt;
+
+&lt;p&gt;休憩を挟み、LTの嵐。&lt;/p&gt;
+
+&lt;p&gt;supermomongaさんによる&lt;a href=&#34;http://www.slideshare.net/supermomonga/super-cool-presentation-at-vimconf2014&#34;&gt;かなりすごい発表（かなり）&lt;/a&gt;では、音を有効に使おうというお話でした。
+ももんがさん相変らずおもろい人です。&lt;/p&gt;
+
+&lt;p&gt;pebble8888さんによる&lt;a href=&#34;http://www.slideshare.net/pebble8888/using-xvim-with-macvim&#34;&gt;XVim with MacVim and smartgrep&lt;/a&gt;では、XCodeでのVimEmuのお話、それとsmartgrepというコメントを無視してgrepしてくれる便利ツールのお話でした。
+VimEmuは非常に便利だと思うのですが、触っているうちにやっぱりVimじゃないんだよねーと思ってしまう罪作りなやつだと思います。&lt;/p&gt;
+
+&lt;p&gt;haya14busaさんによる&lt;a href=&#34;https://docs.google.com/presentation/d/1ie2VCSt9onXmoY3v_zxJdMjYJSbAelVR-QExdUQK-Tw/pub?start=false&amp;amp;loop=false&amp;amp;delayms=3000&amp;amp;slide=id.g4e7add63c_05&#34;&gt;/-improved&lt;/a&gt;では&amp;rdquo;/&amp;ldquo;を有効に使おうというお話。
+hayabusaさんはVim始めてまだ2年？なのにすごいと思いました。
+勝てる気がしないです。&lt;/p&gt;
+
+&lt;p&gt;Kuniwakさんによる&lt;a href=&#34;https://speakerdeck.com/orgachem/zhuan-banuxian-falsezhang-vint&#34;&gt;vim script初心者に使ってもらいたい、転ばぬ先の杖「Vint」&lt;/a&gt;では、vim script用のlintツールの紹介でした。
+Kuniwakさんは今回の開催にあたり、非常に尽力してくださっていてすごい人でした。
+良さげなので今度使ってみようと思います、Vint。&lt;/p&gt;
+
+&lt;p&gt;raa0121さんによる&lt;a href=&#34;http://www.slideshare.net/raa0121/jenkinsvimenv-vim-vimconf2014&#34;&gt;Jenkins + vimenvで最新のVimを使おう！&lt;/a&gt;は、VimmerはpatchごとにVimをビルドして持っているらしいと聞きました。
+驚愕しました。&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip; Now Loading&lt;/p&gt;
+
+&lt;p&gt;発表が終われば、懇親会になりました。
+懇親会では何人かの方とお話をすることができました。
+あと軽食が美味しかったです。
+軽食らしく、ピザLサイズ2枚半、寿司1パック食べました。
+THE 軽食ですね。
+お腹いっぱいで幸せでした。&lt;/p&gt;
+
+&lt;p&gt;VimConf開催にあたって主催してくださったみなさま、本当にありがとうございました。
+次回があれば、また発表をしたい気持ちです。
+例えばJavaとVimについて。&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip; Now Loading&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip; Sorry, failed to initialize java virtual machine. Try it again.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Vimで、データ量に応じたデータ転送速度を計測してみた</title>
+      <link>http://kamichidu.github.com/post/2014/11/02-vim-data-transfer-time/</link>
+      <pubDate>Sun, 02 Nov 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2014/11/02-vim-data-transfer-time/</guid>
+      <description>&lt;p&gt;私の作成するpluginでは、巨大なデータをあれこれすることが多いので、Vimでどの程度の時間がかかるかを計測してみた。
+以下のグラフを見れば、大体の傾向が掴めるかと思います。
+細かい数値は環境によっても変わるとは思いますが、ここではざっくりとした傾向と大雑把な処理時間がわかればいいと割り切っています。
+ちなみにArch Linuxでの計測です。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://kamichidu.github.com/images/2014-11-02-vim-data-transfer-time.png&#34; alt=&#34;graph&#34; title=&#34;readfile、libcall、if_luaのデータ転送速度&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;グラフからわかることは、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;if_lua以外はデータ量に線形比例する時間がかかる&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;readfile()はそれほど時間がかかるものではない&lt;/p&gt;
+
+&lt;p&gt;単純にIO + メモリ確保程度だと思われる。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;libcall()では文字列経由で渡す必要があるので、かなり時間のかかる処理になっている&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;if_luaは参照経由でのデータ受け渡しが可能なため、非常に高速にデータの受け渡しが行える&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;グラフ中で処理時間にぶれがあるのは、恐らくIOの待ち時間でしょう。&lt;/p&gt;
+
+&lt;p&gt;libcall()で巨大なデータを扱う必要がある場合、ファイル経由での受け渡しをする等の対策が必要になるかもしれません。&lt;/p&gt;
+
+&lt;p&gt;if_luaについては、参照で受け渡せるため、データの受け渡しには時間はかかりません。&lt;/p&gt;
+
+&lt;p&gt;libcall()とif_luaのどちらが高速か、は、luajitが使えるかどうかと、処理の内容によるので一概には言えませんが、データの受け渡しという観点から見た場合はif_luaが有利なように思えます。
+もちろん、ファイル経由で受け渡す等、高速化のためのチューニングを行えば、libcall()でも十分な速度が稼げると思います。&lt;/p&gt;
+
+&lt;p&gt;今回用いたベンチマークスクリプトは&lt;a href=&#34;https://gist.github.com/kamichidu/941c633f1978835dc9f5&#34;&gt;gistに上げています&lt;/a&gt;ので、興味のある方はご参照ください。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>watchdogsを使ってjavaのシンタックスチェックを非同期に行う</title>
+      <link>http://kamichidu.github.com/post/2014/10/25-configure-watchdogs-for-javac/</link>
+      <pubDate>Sat, 25 Oct 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2014/10/25-configure-watchdogs-for-javac/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://github.com/osyo-manga/vim-watchdogs&#34;&gt;vim-watchdogs&lt;/a&gt;とは、&lt;a href=&#34;https://github.com/thinca/vim-quickrun&#34;&gt;vim-quickrun&lt;/a&gt;を使って非同期にシンタックスチェックを行う便利pluginです。
+詳しくはhelpか、&lt;a href=&#34;http://d.hatena.ne.jp/osyo-manga/20120924/1348473304&#34;&gt;おしょーさんの記事&lt;/a&gt;を参照してください。&lt;/p&gt;
+
+&lt;p&gt;javaのコンパイルを行うためにはclasspathの設定やら何やら、色々と煩雑な手順を踏む必要があります。
+mavenなんかを使えばこの辺楽になりますが、いちいちmaven compileなんてやってたら日が暮れてしまいます。
+そこでwatchdogsですよ。&lt;/p&gt;
+
+&lt;p&gt;以下の設定を$MYVIMRCに記述して、javaの編集中に:WatchdogsRunすれば、いい感じにqfixwindowが開くと思います。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;let g:quickrun_config[&#39;java/watchdogs_checker&#39;]= {&#39;type&#39;: &#39;watchdogs_checker/javac&#39;}
+let g:quickrun_config[&#39;watchdogs_checker/javac&#39;]= {
+\   &#39;command&#39;: &#39;$JAVA_HOME/bin/javac&#39;,
+\   &#39;cmdopt&#39;: join([
+\       &#39;-Xlint:all&#39;,
+\       &#39;-d $TEMP&#39;,
+\       &#39;-sourcepath &amp;quot;%{javaclasspath#source_path()}&amp;quot;&#39;,
+\       &#39;-classpath &amp;quot;%{javaclasspath#classpath()}&amp;quot;&#39;,
+\       &#39;-deprecation&#39;,
+\   ]),
+\   &#39;exec&#39;: &#39;%c %o %S&#39;,
+\   &#39;errorformat&#39;: &#39;%A%f:%l: %m,%-Z%p^,%+C%.%#,%-G%.%#&#39;,
+\}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;errorformatについては、:help errorformat-javacから引っぱってきました。
+ちょっと不満点あるんで、そのうちどうにかするかも。&lt;/p&gt;
+
+&lt;p&gt;ミソは&lt;a href=&#34;https://github.com/kamichidu/vim-javaclasspath&#34;&gt;vim-javaclasspath&lt;/a&gt;を使ってclasspathの設定やsourcepathの設定を簡略化してるところ。
+vim-javaclasspathが対応している限り、特に自分で何かしなくてもwatchdogsで非同期チェックが可能になります。&lt;/p&gt;
+
+&lt;p&gt;参考までに、私のqfixwindow関係の設定は、&lt;a href=&#34;http://d.hatena.ne.jp/thinca/20130708/1373210009&#34;&gt;thincaさんの記事&lt;/a&gt;を参考に入れています。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>unite-javaimportがメジャーバージョンアップしました</title>
+      <link>http://kamichidu.github.com/post/2014/10/19-release-note-for-unite-javaimport/</link>
+      <pubDate>Sun, 19 Oct 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2014/10/19-release-note-for-unite-javaimport/</guid>
+      <description>&lt;p&gt;今までバージョン0.2.xだった&lt;a href=&#34;https://github.com/kamichidu/vim-unite-javaimport&#34;&gt;unite-javaimport&lt;/a&gt;が、この度0.3.xになりました。
+内部構造が大幅に変更されているため、0.2.xと比べて&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;メモリ使用量の削減&lt;/p&gt;
+
+&lt;p&gt;0.2.xでは500M程使ってしまっていましたが、大きく改善されています。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;速度の向上&lt;/p&gt;
+
+&lt;p&gt;0.2.xでは内部的にローカルサーバを立ち上げて、javaimportが起動されるごとに計算を行っていました。
+0.3.xでは主にキャッシュ周りのファイル構成を見直し、一度起動した後は主にキャッシュから候補を取得するため、速度が向上しました。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;以上の点が改善されています。&lt;/p&gt;
+
+&lt;p&gt;また、新規機能の追加として、&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;static import機能の追加&lt;/p&gt;
+
+&lt;p&gt;以下のunite-sourceが追加されています。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;javaimport/field&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;javaimport/method&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;また同時に、javaimport/classのアクションにexpandが追加されています。
+javaimport/classで選択したクラスをjavaimport/fieldおよびjavaimport/methodに渡して起動することができます。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/ctrlpvim/ctrlp.vim&#34;&gt;ctrlp&lt;/a&gt;をサポートしました&lt;/p&gt;
+
+&lt;p&gt;以下のコマンドが追加されています。
+ただしhelpはまだないので、実験的なものとなります。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;CtrlPJavaImportClass&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;CtrlPJavaImportField&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;CtrlPJavaImportMethod&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;以上の機能が追加されています。&lt;/p&gt;
+
+&lt;p&gt;また今後の開発についてですが、unite-sourceを主として開発するのではなく、メインのUIを別に作成することを考えています。
+uniteのサポートは今後とも継続するつもりですが、あくまでjavaimportのサポートする1つのインタフェイスという位置付けになります。
+今回ctrlpのサポートを追加したのも、この変更に対する伏線の意図があります。
+なお、本格的な変更は次回のメジャーバージョンアップで行う予定です。&lt;/p&gt;
+
+&lt;p&gt;不具合や要望があれば、&lt;a href=&#34;https://github.com/kamichidu/vim-unite-javaimport/issues&#34;&gt;githubのissues&lt;/a&gt;までお願いいたします。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>json-docletの仕様メモ</title>
+      <link>http://kamichidu.github.com/post/2014/10/04-json-doclet-spec/</link>
+      <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2014/10/04-json-doclet-spec/</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/kamichidu/java-json-doclet&#34;&gt;json-doclet&lt;/a&gt;はJavadocツール用のDoclet。
+標準Docletと違い、HTMLではなくJSONを吐き出します。&lt;/p&gt;
+
+&lt;p&gt;JSONでドキュメントを吐き出すため、アプリケーションからJavadocを利用することがHTMLに比べて容易です。
+以下、その仕様をまとめます。
+&lt;em&gt;開発中のため、予告なく仕様は変更になる可能性があります。&lt;/em&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;許容する引数&#34;&gt;許容する引数&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;-ofile (必須)&lt;/p&gt;
+
+&lt;p&gt;出力するファイル名を指定する。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;-append&lt;/p&gt;
+
+&lt;p&gt;-ofileで指定されたファイルに追記する。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;-pretty&lt;/p&gt;
+
+&lt;p&gt;JSONを出力時、整形された状態で出力する。&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;出力されるjsonオブジェクト&#34;&gt;出力されるJSONオブジェクト&lt;/h3&gt;
+
+&lt;h4 id=&#34;a-name-root-object-ルートオブジェクト-a&#34;&gt;&lt;a name=&#34;root-object&#34;&gt;ルートオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;classes - &lt;a href=&#34;#class-object&#34;&gt;クラスオブジェクト&lt;/a&gt;の配列&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-class-object-クラスオブジェクト-a&#34;&gt;&lt;a name=&#34;class-object&#34;&gt;クラスオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - クラスの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;interfaces - クラスが実装しているインタフェイスの正規名の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;superclass - 親クラスの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - クラスに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;since - @sinceタグの情報&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;see - @seeタグの情報を持つ配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;constructors - &lt;a href=&#34;#constructor-object&#34;&gt;コンストラクタオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;fields - &lt;a href=&#34;#field-object&#34;&gt;フィールドオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;methods - &lt;a href=&#34;#method-object&#34;&gt;メソッドオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-constructor-object-コンストラクタオブジェクト-a&#34;&gt;&lt;a name=&#34;constructor-object&#34;&gt;コンストラクタオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - コンストラクタメソッドの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - メソッドに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;parameters - &lt;a href=&#34;#method-parameter-object&#34;&gt;メソッドパラメータオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;throws - &lt;a href=&#34;#exception-object&#34;&gt;例外オブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-exception-object-例外オブジェクト-a&#34;&gt;&lt;a name=&#34;exception-object&#34;&gt;例外オブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - 例外クラスの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - @throwsタグに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-method-parameter-object-メソッドパラメータオブジェクト-a&#34;&gt;&lt;a name=&#34;method-parameter-object&#34;&gt;メソッドパラメータオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - 変数名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - @paramsタグに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;type - 型の正規名&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-field-object-フィールドオブジェクト-a&#34;&gt;&lt;a name=&#34;field-object&#34;&gt;フィールドオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - フィールド名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - フィールドに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;type - 型の正規名&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;a-name-method-object-メソッドオブジェクト-a&#34;&gt;&lt;a name=&#34;method-object&#34;&gt;メソッドオブジェクト&lt;/a&gt;&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;name - メソッドの正規名&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;comment_text - メソッドに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;parameters - &lt;a href=&#34;#method-parameter-object&#34;&gt;メソッドパラメータオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;throws - &lt;a href=&#34;#exception-object&#34;&gt;例外オブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;return_type - メソッドから返却される型の正規名&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ref-javaというref-sourceを作っています</title>
+      <link>http://kamichidu.github.com/post/2014/10/04-making-ref-java/</link>
+      <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2014/10/04-making-ref-java/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://github.com/kamichidu/vim-ref-java&#34;&gt;https://github.com/kamichidu/vim-ref-java&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;まだ触りだけしか作ってなくて、ほぼ動かないに等しい状態ですが、Java用のref-sourceを作成しています。&lt;/p&gt;
+
+&lt;p&gt;refというのは、&lt;a href=&#34;http://d.hatena.ne.jp/thinca/&#34;&gt;thinca&lt;/a&gt;さんが作成された、Vimからドキュメントを閲覧するためのVim Pluginです。
+私は主にmanとperldocの閲覧に使っていました。
+常々Javaのサポートが欲しかったのですが、先日&lt;a href=&#34;https://github.com/kamichidu/java-json-doclet&#34;&gt;json-doclet&lt;/a&gt;というJavadoc用のDocletを作成したため、refを使ってJavadocが見たい欲求を叶えようとしています。&lt;/p&gt;
+
+&lt;p&gt;設計中の仕組みを、備忘を兼ねてメモ。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://maven.apache.org/&#34;&gt;maven&lt;/a&gt;を使い、&lt;a href=&#34;http://search.maven.org/&#34;&gt;Maven Central Repository&lt;/a&gt;から依存するJarをダウンロード&lt;/p&gt;
+
+&lt;p&gt;ここはPlugin側で自動的にダウンロードするより、-sources.jarをユーザが保持していることを前提としたほうが良くないか、と悩んでいます。
+要検討。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;ダウンロードしたJarに対して、json-docletを使用してjson形式のJavadocファイルを作成&lt;/p&gt;
+
+&lt;p&gt;json-docletで出力するファイルは、元のJarに対してディレクトリ構造を保持したままref-java用のキャッシュディレクトリに格納する。
+もしくは、ref本体のキャッシュ機能に任せてしまって、ref-javaは独自にキャッシュの管理は行わない。&lt;/p&gt;
+
+&lt;p&gt;Jarの内容が変化することを考えて、キャッシュを行うのは前回キャッシュを行ってから変更のあったJarのみとする。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;作成されたJavadocファイルを、ref-javaから読み込み、ユーザからのクエリに従って表示&lt;/p&gt;
+
+&lt;p&gt;Javadocファイルは複数になるため、読み込み終わったタイミングでJavadoc情報のマージを行う。
+描画時には、&lt;a href=&#34;https://github.com/mattn/wwwrenderer-vim&#34;&gt;wwwrenderer-vim&lt;/a&gt;を使用する。
+ただし、HTMLのより良い表示と速度のため、別の手段を考える必要があるかもしれない。&lt;/p&gt;
+
+&lt;p&gt;ユーザからのクエリについては、使い勝手を考慮して独自の解釈を行う必要があるかも。&lt;/p&gt;
+
+&lt;p&gt;このとき、クラスドキュメントの表示、メソッドやフィールドドキュメントの表示について、別途対応したい。&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>リポジトリ名を変更しました</title>
+      <link>http://kamichidu.github.com/post/2014/10/04-changed-my-repository-name/</link>
+      <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://kamichidu.github.com/post/2014/10/04-changed-my-repository-name/</guid>
+      <description>&lt;p&gt;githubのリポジトリ名が、統一感なかったため一部変更を行いました。
+私のプロダクトをお使いの方は、githubがよしなにリダイレクトしてくれるので、今すぐに設定を変更して頂く必要はありません。
+これ以降、私のプロダクトを使って頂ける方がいましたら、新しいURLでのご利用をお願いいたします。&lt;/p&gt;
+
+&lt;p&gt;今回変更を行ったのは、以下のリポジトリとなります。&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;旧リポジトリ名&lt;/th&gt;
+&lt;th&gt;新リポジトリ名&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;unite-javaimport&lt;/td&gt;
+&lt;td&gt;vim-unite-javaimport&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;vital-layout&lt;/td&gt;
+&lt;td&gt;vim-vital-layout&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;vital-pubsub&lt;/td&gt;
+&lt;td&gt;vim-vital-pubsub&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;vital-skanda&lt;/td&gt;
+&lt;td&gt;vim-vital-skanda&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;unite-javadoc_viewer&lt;/td&gt;
+&lt;td&gt;vim-unite-javadoc_viewer&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
