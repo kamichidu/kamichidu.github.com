@@ -1,0 +1,15 @@
+<aside id="profile-3" class="widget widget_profile">
+
+    <h1 class="widget-title">Profile</h1>
+    <div>
+        {{ $baseurl := .Site.BaseURL }}
+        <p>
+            {{ .Site.Params.author }}
+        </p>
+        <p>
+            <a href="https://github.com/{{ .Site.Params.authorGithub }}" target="_blank"><img src="{{ $baseurl }}/logos/github-light-32px.png"></a>
+            <a href="https://twitter.com/{{ .Site.Params.authorTwitter }}" target="_blank"><img src="{{ $baseurl }}/logos/twitter.svg"></a>
+        </p>
+    </div>
+
+</aside>
