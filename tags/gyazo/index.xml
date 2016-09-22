@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Gyazo on なるはやで いい感じの 動作確認</title>
-    <link>http://kamichidu.github.com/tags/gyazo/</link>
+    <link>//kamichidu.github.com/tags/gyazo/</link>
     <description>Recent content in Gyazo on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Tue, 09 Feb 2016 00:00:00 +0900</lastBuildDate>
-    <atom:link href="http://kamichidu.github.com/tags/gyazo/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//kamichidu.github.com/tags/gyazo/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Gyazo APIについて</title>
-      <link>http://kamichidu.github.com/post/2016/02/09-about-gyazo-api/</link>
+      <link>//kamichidu.github.com/post/2016/02/09-about-gyazo-api/</link>
       <pubDate>Tue, 09 Feb 2016 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2016/02/09-about-gyazo-api/</guid>
+      <guid>//kamichidu.github.com/post/2016/02/09-about-gyazo-api/</guid>
       <description>&lt;p&gt;スクリーンショットをWeb上で共有するための&lt;a href=&#34;https://gyazo.com/&#34;&gt;Gyazo&lt;/a&gt;というサービスがあります。
 とても便利なサービスですから、プログラマの方は比較的よく使われているのではないでしょうか。&lt;/p&gt;
 

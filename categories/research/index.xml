@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Research on なるはやで いい感じの 動作確認</title>
-    <link>http://kamichidu.github.com/categories/research/</link>
+    <link>//kamichidu.github.com/categories/research/</link>
     <description>Recent content in Research on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Tue, 09 Feb 2016 00:00:00 +0900</lastBuildDate>
-    <atom:link href="http://kamichidu.github.com/categories/research/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//kamichidu.github.com/categories/research/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Gyazo APIについて</title>
-      <link>http://kamichidu.github.com/post/2016/02/09-about-gyazo-api/</link>
+      <link>//kamichidu.github.com/post/2016/02/09-about-gyazo-api/</link>
       <pubDate>Tue, 09 Feb 2016 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2016/02/09-about-gyazo-api/</guid>
+      <guid>//kamichidu.github.com/post/2016/02/09-about-gyazo-api/</guid>
       <description>&lt;p&gt;スクリーンショットをWeb上で共有するための&lt;a href=&#34;https://gyazo.com/&#34;&gt;Gyazo&lt;/a&gt;というサービスがあります。
 とても便利なサービスですから、プログラマの方は比較的よく使われているのではないでしょうか。&lt;/p&gt;
 
@@ -43,16 +43,16 @@ upload.cgiは今後廃止予定で、REST APIに一本化されるのか？&lt;/
     
     <item>
       <title>Vimで、データ量に応じたデータ転送速度を計測してみた</title>
-      <link>http://kamichidu.github.com/post/2014/11/02-vim-data-transfer-time/</link>
+      <link>//kamichidu.github.com/post/2014/11/02-vim-data-transfer-time/</link>
       <pubDate>Sun, 02 Nov 2014 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2014/11/02-vim-data-transfer-time/</guid>
+      <guid>//kamichidu.github.com/post/2014/11/02-vim-data-transfer-time/</guid>
       <description>&lt;p&gt;私の作成するpluginでは、巨大なデータをあれこれすることが多いので、Vimでどの程度の時間がかかるかを計測してみた。
 以下のグラフを見れば、大体の傾向が掴めるかと思います。
 細かい数値は環境によっても変わるとは思いますが、ここではざっくりとした傾向と大雑把な処理時間がわかればいいと割り切っています。
 ちなみにArch Linuxでの計測です。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://kamichidu.github.com/images/2014-11-02-vim-data-transfer-time.png&#34; alt=&#34;graph&#34; title=&#34;readfile、libcall、if_luaのデータ転送速度&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;//kamichidu.github.com/images/2014-11-02-vim-data-transfer-time.png&#34; alt=&#34;graph&#34; title=&#34;readfile、libcall、if_luaのデータ転送速度&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;グラフからわかることは、&lt;/p&gt;
 

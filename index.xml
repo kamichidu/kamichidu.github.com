@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>なるはやで いい感じの 動作確認</title>
-    <link>http://kamichidu.github.com/</link>
+    <link>//kamichidu.github.com/</link>
     <description>Recent content on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Tue, 20 Sep 2016 00:00:00 +0900</lastBuildDate>
-    <atom:link href="http://kamichidu.github.com/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//kamichidu.github.com/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>ブラウザ上でのJavaScriptエラーを収集する手法について</title>
-      <link>http://kamichidu.github.com/post/2016/09/20-collecting-error-log-on-the-browser/</link>
+      <link>//kamichidu.github.com/post/2016/09/20-collecting-error-log-on-the-browser/</link>
       <pubDate>Tue, 20 Sep 2016 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2016/09/20-collecting-error-log-on-the-browser/</guid>
+      <guid>//kamichidu.github.com/post/2016/09/20-collecting-error-log-on-the-browser/</guid>
       <description>
 
 &lt;p&gt;現代的なWebサービスを構築する場合、避けては通れないのが各種ログの収集と活用です。
@@ -144,10 +144,10 @@ else
     
     <item>
       <title>Gyazo APIについて</title>
-      <link>http://kamichidu.github.com/post/2016/02/09-about-gyazo-api/</link>
+      <link>//kamichidu.github.com/post/2016/02/09-about-gyazo-api/</link>
       <pubDate>Tue, 09 Feb 2016 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2016/02/09-about-gyazo-api/</guid>
+      <guid>//kamichidu.github.com/post/2016/02/09-about-gyazo-api/</guid>
       <description>&lt;p&gt;スクリーンショットをWeb上で共有するための&lt;a href=&#34;https://gyazo.com/&#34;&gt;Gyazo&lt;/a&gt;というサービスがあります。
 とても便利なサービスですから、プログラマの方は比較的よく使われているのではないでしょうか。&lt;/p&gt;
 
@@ -176,10 +176,10 @@ upload.cgiは今後廃止予定で、REST APIに一本化されるのか？&lt;/
     
     <item>
       <title>ProjectLをPlay storeで公開しました</title>
-      <link>http://kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store/</link>
+      <link>//kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store/</link>
       <pubDate>Wed, 09 Dec 2015 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store/</guid>
+      <guid>//kamichidu.github.com/post/2015/12/09-published-project-l-to-play-store/</guid>
       <description>&lt;p&gt;以前から開発していたAndroid用Lingr Clientである&amp;rdquo;ProjectL&amp;rdquo;を、先日Play storeで公開しました。
 &lt;a href=&#34;https://play.google.com/store/apps/details?id=akechi.projectl&#34;&gt;こちら&lt;/a&gt;からどうぞ。
 開発版は&lt;a href=&#34;https://dply.me/epmlks&#34;&gt;deploygateから配布をしていました&lt;/a&gt;が、今回正式にPlay storeに登録しましたので、今後導入が楽になるかと思います。&lt;/p&gt;
@@ -236,10 +236,10 @@ LingrPocketには今まで非常にお世話になったので、Play storeに�
     
     <item>
       <title>高速なVim Plug-inについての一考察</title>
-      <link>http://kamichidu.github.com/post/2015/12/06-vim-speed-consideration/</link>
+      <link>//kamichidu.github.com/post/2015/12/06-vim-speed-consideration/</link>
       <pubDate>Sun, 06 Dec 2015 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2015/12/06-vim-speed-consideration/</guid>
+      <guid>//kamichidu.github.com/post/2015/12/06-vim-speed-consideration/</guid>
       <description>
 
 &lt;p&gt;この記事はVim Advent Calendar 2015の6日目の記事です。
@@ -413,10 +413,10 @@ Vim Plug-inにおける速度とは、Vim Plug-inの目的によって様々な�
     
     <item>
       <title>PHPでの開発環境構築メモ</title>
-      <link>http://kamichidu.github.com/post/2015/06/17-075721/</link>
+      <link>//kamichidu.github.com/post/2015/06/17-075721/</link>
       <pubDate>Wed, 17 Jun 2015 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2015/06/17-075721/</guid>
+      <guid>//kamichidu.github.com/post/2015/06/17-075721/</guid>
       <description>
 
 &lt;p&gt;つい昨日のことですが、PHPでの開発環境を行ったので、メモがてら。&lt;/p&gt;
@@ -478,10 +478,10 @@ composer.jsonに、依存ライブラリを書いていき、./composer.phar ins
     
     <item>
       <title>goの開発環境を整える</title>
-      <link>http://kamichidu.github.com/post/2015/04/24-gogogo/</link>
+      <link>//kamichidu.github.com/post/2015/04/24-gogogo/</link>
       <pubDate>Fri, 24 Apr 2015 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2015/04/24-gogogo/</guid>
+      <guid>//kamichidu.github.com/post/2015/04/24-gogogo/</guid>
       <description>
 
 &lt;p&gt;最近ちょいちょいGoで遊んでいます。
@@ -584,10 +584,10 @@ popd
     
     <item>
       <title>すろっくとゆかいななかまたちの技術系勉強会.vol1に参加してきました</title>
-      <link>http://kamichidu.github.com/post/2015/03/08-srockstudy-vol1/</link>
+      <link>//kamichidu.github.com/post/2015/03/08-srockstudy-vol1/</link>
       <pubDate>Sun, 08 Mar 2015 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2015/03/08-srockstudy-vol1/</guid>
+      <guid>//kamichidu.github.com/post/2015/03/08-srockstudy-vol1/</guid>
       <description>&lt;p&gt;去る2015年2月28日 (土) に、上述の勉強会に参加してPostgreSQLについて発表してきました。
 発表内容としては、PostgreSQLの簡単な紹介とSQLのISO規格なんかについてちょろっと話したくらいです。
 発表中で、PostgreSQLに標準のレプリケーション用のツールがないと言ったところ、みんな喜んでマサカリ飛ばしてきたのが印象的でした (とーるさんとかぱんださんとか) 。
@@ -608,10 +608,10 @@ popd
     
     <item>
       <title>Vimの正規表現を切り刻む</title>
-      <link>http://kamichidu.github.com/post/2014/12/20-parse-vim-regex/</link>
+      <link>//kamichidu.github.com/post/2014/12/20-parse-vim-regex/</link>
       <pubDate>Sat, 20 Dec 2014 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2014/12/20-parse-vim-regex/</guid>
+      <guid>//kamichidu.github.com/post/2014/12/20-parse-vim-regex/</guid>
       <description>
 
 &lt;p&gt;この記事はVim Advent Calendar 2014の20日目の記事です。&lt;/p&gt;
@@ -743,10 +743,10 @@ RegexpTokenize \d\+\(,\d\+\)\=
     
     <item>
       <title>VimConf2014で発表してきた</title>
-      <link>http://kamichidu.github.com/post/2014/11/02-vimconf2014/</link>
+      <link>//kamichidu.github.com/post/2014/11/02-vimconf2014/</link>
       <pubDate>Sun, 02 Nov 2014 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2014/11/02-vimconf2014/</guid>
+      <guid>//kamichidu.github.com/post/2014/11/02-vimconf2014/</guid>
       <description>&lt;p&gt;昨日になりますが、&lt;a href=&#34;http://vimconf.vim-jp.org/2014/&#34;&gt;VimConf2014&lt;/a&gt;に参加し、発表をしてきました。
 人生初の勉強会での発表だったので、非常に緊張しましたが、無事発表を終えることができました。
 終わった後になって、やっぱり少しは発表練習するべきだったか、とか、スライドもう少し凝れば良かったとか、反省点は色々出てきました。
@@ -846,16 +846,16 @@ THE 軽食ですね。
     
     <item>
       <title>Vimで、データ量に応じたデータ転送速度を計測してみた</title>
-      <link>http://kamichidu.github.com/post/2014/11/02-vim-data-transfer-time/</link>
+      <link>//kamichidu.github.com/post/2014/11/02-vim-data-transfer-time/</link>
       <pubDate>Sun, 02 Nov 2014 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2014/11/02-vim-data-transfer-time/</guid>
+      <guid>//kamichidu.github.com/post/2014/11/02-vim-data-transfer-time/</guid>
       <description>&lt;p&gt;私の作成するpluginでは、巨大なデータをあれこれすることが多いので、Vimでどの程度の時間がかかるかを計測してみた。
 以下のグラフを見れば、大体の傾向が掴めるかと思います。
 細かい数値は環境によっても変わるとは思いますが、ここではざっくりとした傾向と大雑把な処理時間がわかればいいと割り切っています。
 ちなみにArch Linuxでの計測です。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://kamichidu.github.com/images/2014-11-02-vim-data-transfer-time.png&#34; alt=&#34;graph&#34; title=&#34;readfile、libcall、if_luaのデータ転送速度&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;//kamichidu.github.com/images/2014-11-02-vim-data-transfer-time.png&#34; alt=&#34;graph&#34; title=&#34;readfile、libcall、if_luaのデータ転送速度&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;グラフからわかることは、&lt;/p&gt;
 
@@ -886,10 +886,10 @@ THE 軽食ですね。
     
     <item>
       <title>watchdogsを使ってjavaのシンタックスチェックを非同期に行う</title>
-      <link>http://kamichidu.github.com/post/2014/10/25-configure-watchdogs-for-javac/</link>
+      <link>//kamichidu.github.com/post/2014/10/25-configure-watchdogs-for-javac/</link>
       <pubDate>Sat, 25 Oct 2014 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2014/10/25-configure-watchdogs-for-javac/</guid>
+      <guid>//kamichidu.github.com/post/2014/10/25-configure-watchdogs-for-javac/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://github.com/osyo-manga/vim-watchdogs&#34;&gt;vim-watchdogs&lt;/a&gt;とは、&lt;a href=&#34;https://github.com/thinca/vim-quickrun&#34;&gt;vim-quickrun&lt;/a&gt;を使って非同期にシンタックスチェックを行う便利pluginです。
 詳しくはhelpか、&lt;a href=&#34;http://d.hatena.ne.jp/osyo-manga/20120924/1348473304&#34;&gt;おしょーさんの記事&lt;/a&gt;を参照してください。&lt;/p&gt;
 
@@ -926,10 +926,10 @@ vim-javaclasspathが対応している限り、特に自分で何かしなくて
     
     <item>
       <title>unite-javaimportがメジャーバージョンアップしました</title>
-      <link>http://kamichidu.github.com/post/2014/10/19-release-note-for-unite-javaimport/</link>
+      <link>//kamichidu.github.com/post/2014/10/19-release-note-for-unite-javaimport/</link>
       <pubDate>Sun, 19 Oct 2014 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2014/10/19-release-note-for-unite-javaimport/</guid>
+      <guid>//kamichidu.github.com/post/2014/10/19-release-note-for-unite-javaimport/</guid>
       <description>&lt;p&gt;今までバージョン0.2.xだった&lt;a href=&#34;https://github.com/kamichidu/vim-unite-javaimport&#34;&gt;unite-javaimport&lt;/a&gt;が、この度0.3.xになりました。
 内部構造が大幅に変更されているため、0.2.xと比べて&lt;/p&gt;
 
@@ -989,10 +989,10 @@ uniteのサポートは今後とも継続するつもりですが、あくまで
     
     <item>
       <title>json-docletの仕様メモ</title>
-      <link>http://kamichidu.github.com/post/2014/10/04-json-doclet-spec/</link>
+      <link>//kamichidu.github.com/post/2014/10/04-json-doclet-spec/</link>
       <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2014/10/04-json-doclet-spec/</guid>
+      <guid>//kamichidu.github.com/post/2014/10/04-json-doclet-spec/</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/kamichidu/java-json-doclet&#34;&gt;json-doclet&lt;/a&gt;はJavadocツール用のDoclet。
@@ -1108,10 +1108,10 @@ uniteのサポートは今後とも継続するつもりですが、あくまで
     
     <item>
       <title>ref-javaというref-sourceを作っています</title>
-      <link>http://kamichidu.github.com/post/2014/10/04-making-ref-java/</link>
+      <link>//kamichidu.github.com/post/2014/10/04-making-ref-java/</link>
       <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2014/10/04-making-ref-java/</guid>
+      <guid>//kamichidu.github.com/post/2014/10/04-making-ref-java/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://github.com/kamichidu/vim-ref-java&#34;&gt;https://github.com/kamichidu/vim-ref-java&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;まだ触りだけしか作ってなくて、ほぼ動かないに等しい状態ですが、Java用のref-sourceを作成しています。&lt;/p&gt;
@@ -1152,10 +1152,10 @@ uniteのサポートは今後とも継続するつもりですが、あくまで
     
     <item>
       <title>リポジトリ名を変更しました</title>
-      <link>http://kamichidu.github.com/post/2014/10/04-changed-my-repository-name/</link>
+      <link>//kamichidu.github.com/post/2014/10/04-changed-my-repository-name/</link>
       <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2014/10/04-changed-my-repository-name/</guid>
+      <guid>//kamichidu.github.com/post/2014/10/04-changed-my-repository-name/</guid>
       <description>&lt;p&gt;githubのリポジトリ名が、統一感なかったため一部変更を行いました。
 私のプロダクトをお使いの方は、githubがよしなにリダイレクトしてくれるので、今すぐに設定を変更して頂く必要はありません。
 これ以降、私のプロダクトを使って頂ける方がいましたら、新しいURLでのご利用をお願いいたします。&lt;/p&gt;

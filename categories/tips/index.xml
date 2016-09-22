@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tips on なるはやで いい感じの 動作確認</title>
-    <link>http://kamichidu.github.com/categories/tips/</link>
+    <link>//kamichidu.github.com/categories/tips/</link>
     <description>Recent content in Tips on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Wed, 17 Jun 2015 00:00:00 +0900</lastBuildDate>
-    <atom:link href="http://kamichidu.github.com/categories/tips/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//kamichidu.github.com/categories/tips/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>PHPでの開発環境構築メモ</title>
-      <link>http://kamichidu.github.com/post/2015/06/17-075721/</link>
+      <link>//kamichidu.github.com/post/2015/06/17-075721/</link>
       <pubDate>Wed, 17 Jun 2015 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2015/06/17-075721/</guid>
+      <guid>//kamichidu.github.com/post/2015/06/17-075721/</guid>
       <description>
 
 &lt;p&gt;つい昨日のことですが、PHPでの開発環境を行ったので、メモがてら。&lt;/p&gt;
@@ -76,10 +76,10 @@ composer.jsonに、依存ライブラリを書いていき、./composer.phar ins
     
     <item>
       <title>goの開発環境を整える</title>
-      <link>http://kamichidu.github.com/post/2015/04/24-gogogo/</link>
+      <link>//kamichidu.github.com/post/2015/04/24-gogogo/</link>
       <pubDate>Fri, 24 Apr 2015 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2015/04/24-gogogo/</guid>
+      <guid>//kamichidu.github.com/post/2015/04/24-gogogo/</guid>
       <description>
 
 &lt;p&gt;最近ちょいちょいGoで遊んでいます。
@@ -182,10 +182,10 @@ popd
     
     <item>
       <title>Vimの正規表現を切り刻む</title>
-      <link>http://kamichidu.github.com/post/2014/12/20-parse-vim-regex/</link>
+      <link>//kamichidu.github.com/post/2014/12/20-parse-vim-regex/</link>
       <pubDate>Sat, 20 Dec 2014 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2014/12/20-parse-vim-regex/</guid>
+      <guid>//kamichidu.github.com/post/2014/12/20-parse-vim-regex/</guid>
       <description>
 
 &lt;p&gt;この記事はVim Advent Calendar 2014の20日目の記事です。&lt;/p&gt;
@@ -317,10 +317,10 @@ RegexpTokenize \d\+\(,\d\+\)\=
     
     <item>
       <title>watchdogsを使ってjavaのシンタックスチェックを非同期に行う</title>
-      <link>http://kamichidu.github.com/post/2014/10/25-configure-watchdogs-for-javac/</link>
+      <link>//kamichidu.github.com/post/2014/10/25-configure-watchdogs-for-javac/</link>
       <pubDate>Sat, 25 Oct 2014 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2014/10/25-configure-watchdogs-for-javac/</guid>
+      <guid>//kamichidu.github.com/post/2014/10/25-configure-watchdogs-for-javac/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://github.com/osyo-manga/vim-watchdogs&#34;&gt;vim-watchdogs&lt;/a&gt;とは、&lt;a href=&#34;https://github.com/thinca/vim-quickrun&#34;&gt;vim-quickrun&lt;/a&gt;を使って非同期にシンタックスチェックを行う便利pluginです。
 詳しくはhelpか、&lt;a href=&#34;http://d.hatena.ne.jp/osyo-manga/20120924/1348473304&#34;&gt;おしょーさんの記事&lt;/a&gt;を参照してください。&lt;/p&gt;
 

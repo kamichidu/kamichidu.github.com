@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Notice on なるはやで いい感じの 動作確認</title>
-    <link>http://kamichidu.github.com/categories/notice/</link>
+    <link>//kamichidu.github.com/categories/notice/</link>
     <description>Recent content in Notice on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Wed, 01 Oct 2014 00:00:00 +0900</lastBuildDate>
-    <atom:link href="http://kamichidu.github.com/categories/notice/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//kamichidu.github.com/categories/notice/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>BLOG始めました</title>
-      <link>http://kamichidu.github.com/post/2014/10/01-start-writing-my-own-blog/</link>
+      <link>//kamichidu.github.com/post/2014/10/01-start-writing-my-own-blog/</link>
       <pubDate>Wed, 01 Oct 2014 00:00:00 +0900</pubDate>
       
-      <guid>http://kamichidu.github.com/post/2014/10/01-start-writing-my-own-blog/</guid>
+      <guid>//kamichidu.github.com/post/2014/10/01-start-writing-my-own-blog/</guid>
       <description>&lt;p&gt;今まで大抵は&lt;a href=&#34;http://qiita.com/kamichidu&#34;&gt;Qiita&lt;/a&gt;あたりで記事書いてたんですが、自作ツール等のアナウンスに使うのは気がひけていたので、今回BLOG始めました。
 今後は技術系、アナウンス系、その他でこちらを更新するつもりです。
 もちろんQiitaも今まで同様に更新するつもりです。&lt;/p&gt;
