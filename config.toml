@@ -1,4 +1,4 @@
-baseurl = "http://kamichidu.github.com/"
+baseurl = "//kamichidu.github.com/"
 title = "なるはやで いい感じの 動作確認"
 languageCode = "ja-jp"
 hasCJKLanguage = true
