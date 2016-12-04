@@ -2,12 +2,36 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>なるはやで いい感じの 動作確認</title>
-    <link>https://kamichidu.github.io/</link>
+    <link>https://kamichidu.github.io/index.xml</link>
     <description>Recent content on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Tue, 20 Sep 2016 00:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 04 Dec 2016 19:20:31 +0900</lastBuildDate>
     <atom:link href="https://kamichidu.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>ルータの設定で固定IPを設定していたらハマった話</title>
+      <link>https://kamichidu.github.io/post/2016/12/04-dhcp-client-identifier/</link>
+      <pubDate>Sun, 04 Dec 2016 19:20:31 +0900</pubDate>
+      
+      <guid>https://kamichidu.github.io/post/2016/12/04-dhcp-client-identifier/</guid>
+      <description>&lt;p&gt;我が家では、家庭内でのみ利用するためのサービスを稼動させているサーバがあります。
+基本的にmDNSによりホスト名とIPを紐づけているんですが、出先からアクセスしたいときのためにsshdも稼動させている関係でIPを固定したいサーバがあります。&lt;/p&gt;
+
+&lt;p&gt;基本的にルータの設定でできるならそちらに倒したかったため、DHCP固定割り当ての機能を利用しようとしました。
+NICのMAC Addressを調べて、該当MAC Addressへ割り当てるIPを固定し、ルータ再起動。
+sshdサーバ上で落ちてくるIPを見ると、なぜか固定IP設定したものが落ちてきません。&lt;/p&gt;
+
+&lt;p&gt;色々調べているうちに、DHCPサーバではClient Identifierというものをベースとして、IPを管理しているということがわかりました。
+無意識に、MAC Addressベースで管理していると思っていたら、Client Identifierとして一般的なのがMAC Addressというだけの話っぽい。
+初めて知った&amp;hellip;。&lt;/p&gt;
+
+&lt;p&gt;とまれ、sshdサーバ上で稼動しているdhcpクライアントの設定を確認してみると、丁度まさにClient IdentifierとしてGUIDを使う設定になってました。
+Client Identifierがわかればなんでも良かったんですが、まぁMAC Addressを使うように設定して &lt;code&gt;systemctl restart dhcpcd&lt;/code&gt; すると、ちゃんと設定した固定IPが落ちてくるようになりました。&lt;/p&gt;
+
+&lt;p&gt;ああ、ネットワーク系にもうちょい強くなりたい。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>ブラウザ上でのJavaScriptエラーを収集する手法について</title>
@@ -1147,56 +1171,6 @@ uniteのサポートは今後とも継続するつもりですが、あくまで
 
 &lt;p&gt;このとき、クラスドキュメントの表示、メソッドやフィールドドキュメントの表示について、別途対応したい。&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>リポジトリ名を変更しました</title>
-      <link>https://kamichidu.github.io/post/2014/10/04-changed-my-repository-name/</link>
-      <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
-      
-      <guid>https://kamichidu.github.io/post/2014/10/04-changed-my-repository-name/</guid>
-      <description>&lt;p&gt;githubのリポジトリ名が、統一感なかったため一部変更を行いました。
-私のプロダクトをお使いの方は、githubがよしなにリダイレクトしてくれるので、今すぐに設定を変更して頂く必要はありません。
-これ以降、私のプロダクトを使って頂ける方がいましたら、新しいURLでのご利用をお願いいたします。&lt;/p&gt;
-
-&lt;p&gt;今回変更を行ったのは、以下のリポジトリとなります。&lt;/p&gt;
-
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;旧リポジトリ名&lt;/th&gt;
-&lt;th&gt;新リポジトリ名&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;unite-javaimport&lt;/td&gt;
-&lt;td&gt;vim-unite-javaimport&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;vital-layout&lt;/td&gt;
-&lt;td&gt;vim-vital-layout&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;vital-pubsub&lt;/td&gt;
-&lt;td&gt;vim-vital-pubsub&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;vital-skanda&lt;/td&gt;
-&lt;td&gt;vim-vital-skanda&lt;/td&gt;
-&lt;/tr&gt;
-
-&lt;tr&gt;
-&lt;td&gt;unite-javadoc_viewer&lt;/td&gt;
-&lt;td&gt;vim-unite-javadoc_viewer&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
 </description>
     </item>
     
