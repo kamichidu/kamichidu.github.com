@@ -6,8 +6,122 @@
     <description>Recent content on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sun, 04 Dec 2016 19:20:31 +0900</lastBuildDate>
+    <lastBuildDate>Tue, 06 Dec 2016 01:17:43 +0900</lastBuildDate>
     <atom:link href="https://kamichidu.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Javaで使える軽量級の永続化ライブラリ</title>
+      <link>https://kamichidu.github.io/post/2016/12/06-java-light-weight-persistent/</link>
+      <pubDate>Tue, 06 Dec 2016 01:17:43 +0900</pubDate>
+      
+      <guid>https://kamichidu.github.io/post/2016/12/06-java-light-weight-persistent/</guid>
+      <description>
+
+&lt;p&gt;Javaで開発を行う際に、個人規模なので軽量なあれこれが欲しくなるのですが、基本的にJavaでライブラリを探すと重量級のものが多くあります。
+ORMなどはその最たる例だと思います。
+けれどいわばMicro-ORM的なものや、そのような永続化を主眼に置いたライブラリは、どのような規模でも欲しくなるものだと思います。
+個人で開発を行うにあたって、改めて軽量級でオブジェクトの永続化を主眼に置いたライブラリを探してみましたので、いくつか紹介したいと思います。&lt;/p&gt;
+
+&lt;p&gt;なお、今回探した際の観点としては、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Stream APIと親和性が高い（Collection APIでも可）&lt;/li&gt;
+&lt;li&gt;設定レスで利用できる&lt;/li&gt;
+&lt;li&gt;永続化対象のオブジェクトを、ファイルシステム上に保持できる&lt;/li&gt;
+&lt;li&gt;Key-Value-Store（規模的にSQLは書きたくない）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;というものです。
+特に重要視したのは、Stream APIとの親和性および設定レスでの利用という点です。&lt;/p&gt;
+
+&lt;h2 id=&#34;chronicle-map-http-chronicle-software-products-chronicle-map&#34;&gt;&lt;a href=&#34;http://chronicle.software/products/chronicle-map/&#34;&gt;Chronicle Map&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;特徴として、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;高パフォーマンス&lt;/li&gt;
+&lt;li&gt;off-heapな領域に保持（Direct ByteBuffers）またはファイルシステム上に永続化可能&lt;/li&gt;
+&lt;li&gt;java.util.MapのAPIで使える&lt;/li&gt;
+&lt;li&gt;TCP/UDP越しにレプリケート可能&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;という感じの、かなりリッチなライブラリ。
+あまり軽量っていう感じではないけれど、ある程度本格的なものが欲しかったら考慮する価値がありそう。&lt;/p&gt;
+
+&lt;h2 id=&#34;orientdb-http-orientdb-com&#34;&gt;&lt;a href=&#34;http://orientdb.com&#34;&gt;OrientDB&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;OrientDBの特徴は、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Document DB系&lt;/li&gt;
+&lt;li&gt;Scalable&lt;/li&gt;
+&lt;li&gt;トランザクションサポート&lt;/li&gt;
+&lt;li&gt;複数サーバ上でレプリケート可能&lt;/li&gt;
+&lt;li&gt;RDBからデータを取り込める&lt;/li&gt;
+&lt;li&gt;SQLでのクエリ操作に対応&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;と、これまたリッチなライブラリ。
+なんか軽量って言いたくないレベル&amp;hellip;。&lt;/p&gt;
+
+&lt;h2 id=&#34;mapdb-http-www-mapdb-org&#34;&gt;&lt;a href=&#34;http://www.mapdb.org&#34;&gt;MapDB&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;今回紹介する中で一番有力だと思っているのがこのMapDBです。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Collection APIに永続化の機能を付与&lt;/li&gt;
+&lt;li&gt;off-heapな領域に保持（Direct ByteBuffers）またはファイルシステム上に永続化可能&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;という感じ。
+今回求めていた通りの軽量さ加減なので、MapDBについてもうちょい説明します。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://jankotek.gitbooks.io/mapdb/content/quick-start/&#34;&gt;https://jankotek.gitbooks.io/mapdb/content/quick-start/&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;dependency&amp;gt;
+  &amp;lt;groupId&amp;gt;org.mapdb&amp;lt;/groupId&amp;gt;
+  &amp;lt;artifactId&amp;gt;mapdb&amp;lt;/artifactId&amp;gt;
+  &amp;lt;version&amp;gt;VERSION&amp;lt;/version&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;インストールはmavenで一発。
+これは最近のライブラリならほとんどそうですね。
+Antの時代などを考えると本当に楽になりました。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;//import org.mapdb.*
+DB db = DBMaker.memoryDB().make();
+ConcurrentMap map = db.hashMap(&amp;quot;map&amp;quot;).createOrOpen();
+map.put(&amp;quot;something&amp;quot;, &amp;quot;here&amp;quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このような感じで、メソッドチェーン形式で設定を行い、永続化機能つきのConcurrentMapをインスタンシエートするらしい。
+この形式で利用できるなら、既存のソースコードに組み込むだけで簡単に永続化できる気がします。
+こちらだとoff-heapに領域を確保するっぽいですね。
+off-heapの場合に永続化がされるかは未検証ですが、少なくともon-heapよりは高速化が期待できそうだし、ファイルストアとAPIが共通なのは嬉しい。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;DB db = DBMaker.fileDB(&amp;quot;file.db&amp;quot;).make();
+ConcurrentMap map = db.hashMap(&amp;quot;map&amp;quot;).createOrOpen();
+map.put(&amp;quot;something&amp;quot;, &amp;quot;here&amp;quot;);
+db.close();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;こちらはファイルに永続化する例。
+インスタンシエートするまではoff-heapと差異はあるけど、これは仕方ないですね。
+その後はAPIが共通なので、開発時にはoff-heapで、本番ではファイルで、とか使い分けができそう。&lt;/p&gt;
+
+&lt;p&gt;現段階で予想される難点として、DI層とどう組み合わせるかってことですね。
+いくらでもやり方はあるけれど、単にデフォルトコンストラクタをAOPで注入すると設定が入らないので、そこをどうするかは考えないといけない。
+まぁ永続化対象のクラスごとに型を作るなど、対策はありますのでそう大きな問題ではないです。&lt;/p&gt;
+
+&lt;h2 id=&#34;まとめ&#34;&gt;まとめ&lt;/h2&gt;
+
+&lt;p&gt;今回、Javaで使える軽量級のKVS的に使えるライブラリを3つ紹介しました。
+Chronicle DBとOrientDBはある程度しっかりと使いたい用途で、MapDBはカジュアルに利用する用途で使い勝手が良さそうかなと思います。&lt;/p&gt;
+
+&lt;p&gt;さて、MapDBを実際に使ってみるか&amp;hellip;。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>ルータの設定で固定IPを設定していたらハマった話</title>
@@ -1127,50 +1241,6 @@ uniteのサポートは今後とも継続するつもりですが、あくまで
 
 &lt;li&gt;&lt;p&gt;return_type - メソッドから返却される型の正規名&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>ref-javaというref-sourceを作っています</title>
-      <link>https://kamichidu.github.io/post/2014/10/04-making-ref-java/</link>
-      <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
-      
-      <guid>https://kamichidu.github.io/post/2014/10/04-making-ref-java/</guid>
-      <description>&lt;p&gt;&lt;a href=&#34;https://github.com/kamichidu/vim-ref-java&#34;&gt;https://github.com/kamichidu/vim-ref-java&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;まだ触りだけしか作ってなくて、ほぼ動かないに等しい状態ですが、Java用のref-sourceを作成しています。&lt;/p&gt;
-
-&lt;p&gt;refというのは、&lt;a href=&#34;http://d.hatena.ne.jp/thinca/&#34;&gt;thinca&lt;/a&gt;さんが作成された、Vimからドキュメントを閲覧するためのVim Pluginです。
-私は主にmanとperldocの閲覧に使っていました。
-常々Javaのサポートが欲しかったのですが、先日&lt;a href=&#34;https://github.com/kamichidu/java-json-doclet&#34;&gt;json-doclet&lt;/a&gt;というJavadoc用のDocletを作成したため、refを使ってJavadocが見たい欲求を叶えようとしています。&lt;/p&gt;
-
-&lt;p&gt;設計中の仕組みを、備忘を兼ねてメモ。&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;http://maven.apache.org/&#34;&gt;maven&lt;/a&gt;を使い、&lt;a href=&#34;http://search.maven.org/&#34;&gt;Maven Central Repository&lt;/a&gt;から依存するJarをダウンロード&lt;/p&gt;
-
-&lt;p&gt;ここはPlugin側で自動的にダウンロードするより、-sources.jarをユーザが保持していることを前提としたほうが良くないか、と悩んでいます。
-要検討。&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;ダウンロードしたJarに対して、json-docletを使用してjson形式のJavadocファイルを作成&lt;/p&gt;
-
-&lt;p&gt;json-docletで出力するファイルは、元のJarに対してディレクトリ構造を保持したままref-java用のキャッシュディレクトリに格納する。
-もしくは、ref本体のキャッシュ機能に任せてしまって、ref-javaは独自にキャッシュの管理は行わない。&lt;/p&gt;
-
-&lt;p&gt;Jarの内容が変化することを考えて、キャッシュを行うのは前回キャッシュを行ってから変更のあったJarのみとする。&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;作成されたJavadocファイルを、ref-javaから読み込み、ユーザからのクエリに従って表示&lt;/p&gt;
-
-&lt;p&gt;Javadocファイルは複数になるため、読み込み終わったタイミングでJavadoc情報のマージを行う。
-描画時には、&lt;a href=&#34;https://github.com/mattn/wwwrenderer-vim&#34;&gt;wwwrenderer-vim&lt;/a&gt;を使用する。
-ただし、HTMLのより良い表示と速度のため、別の手段を考える必要があるかもしれない。&lt;/p&gt;
-
-&lt;p&gt;ユーザからのクエリについては、使い勝手を考慮して独自の解釈を行う必要があるかも。&lt;/p&gt;
-
-&lt;p&gt;このとき、クラスドキュメントの表示、メソッドやフィールドドキュメントの表示について、別途対応したい。&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
 </description>
     </item>
     

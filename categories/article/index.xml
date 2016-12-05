@@ -9,6 +9,120 @@
     <atom:link href="https://kamichidu.github.io/categories/article/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Javaで使える軽量級の永続化ライブラリ</title>
+      <link>https://kamichidu.github.io/post/2016/12/06-java-light-weight-persistent/</link>
+      <pubDate>Tue, 06 Dec 2016 01:17:43 +0900</pubDate>
+      
+      <guid>https://kamichidu.github.io/post/2016/12/06-java-light-weight-persistent/</guid>
+      <description>
+
+&lt;p&gt;Javaで開発を行う際に、個人規模なので軽量なあれこれが欲しくなるのですが、基本的にJavaでライブラリを探すと重量級のものが多くあります。
+ORMなどはその最たる例だと思います。
+けれどいわばMicro-ORM的なものや、そのような永続化を主眼に置いたライブラリは、どのような規模でも欲しくなるものだと思います。
+個人で開発を行うにあたって、改めて軽量級でオブジェクトの永続化を主眼に置いたライブラリを探してみましたので、いくつか紹介したいと思います。&lt;/p&gt;
+
+&lt;p&gt;なお、今回探した際の観点としては、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Stream APIと親和性が高い（Collection APIでも可）&lt;/li&gt;
+&lt;li&gt;設定レスで利用できる&lt;/li&gt;
+&lt;li&gt;永続化対象のオブジェクトを、ファイルシステム上に保持できる&lt;/li&gt;
+&lt;li&gt;Key-Value-Store（規模的にSQLは書きたくない）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;というものです。
+特に重要視したのは、Stream APIとの親和性および設定レスでの利用という点です。&lt;/p&gt;
+
+&lt;h2 id=&#34;chronicle-map-http-chronicle-software-products-chronicle-map&#34;&gt;&lt;a href=&#34;http://chronicle.software/products/chronicle-map/&#34;&gt;Chronicle Map&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;特徴として、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;高パフォーマンス&lt;/li&gt;
+&lt;li&gt;off-heapな領域に保持（Direct ByteBuffers）またはファイルシステム上に永続化可能&lt;/li&gt;
+&lt;li&gt;java.util.MapのAPIで使える&lt;/li&gt;
+&lt;li&gt;TCP/UDP越しにレプリケート可能&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;という感じの、かなりリッチなライブラリ。
+あまり軽量っていう感じではないけれど、ある程度本格的なものが欲しかったら考慮する価値がありそう。&lt;/p&gt;
+
+&lt;h2 id=&#34;orientdb-http-orientdb-com&#34;&gt;&lt;a href=&#34;http://orientdb.com&#34;&gt;OrientDB&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;OrientDBの特徴は、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Document DB系&lt;/li&gt;
+&lt;li&gt;Scalable&lt;/li&gt;
+&lt;li&gt;トランザクションサポート&lt;/li&gt;
+&lt;li&gt;複数サーバ上でレプリケート可能&lt;/li&gt;
+&lt;li&gt;RDBからデータを取り込める&lt;/li&gt;
+&lt;li&gt;SQLでのクエリ操作に対応&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;と、これまたリッチなライブラリ。
+なんか軽量って言いたくないレベル&amp;hellip;。&lt;/p&gt;
+
+&lt;h2 id=&#34;mapdb-http-www-mapdb-org&#34;&gt;&lt;a href=&#34;http://www.mapdb.org&#34;&gt;MapDB&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;今回紹介する中で一番有力だと思っているのがこのMapDBです。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Collection APIに永続化の機能を付与&lt;/li&gt;
+&lt;li&gt;off-heapな領域に保持（Direct ByteBuffers）またはファイルシステム上に永続化可能&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;という感じ。
+今回求めていた通りの軽量さ加減なので、MapDBについてもうちょい説明します。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://jankotek.gitbooks.io/mapdb/content/quick-start/&#34;&gt;https://jankotek.gitbooks.io/mapdb/content/quick-start/&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;dependency&amp;gt;
+  &amp;lt;groupId&amp;gt;org.mapdb&amp;lt;/groupId&amp;gt;
+  &amp;lt;artifactId&amp;gt;mapdb&amp;lt;/artifactId&amp;gt;
+  &amp;lt;version&amp;gt;VERSION&amp;lt;/version&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;インストールはmavenで一発。
+これは最近のライブラリならほとんどそうですね。
+Antの時代などを考えると本当に楽になりました。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;//import org.mapdb.*
+DB db = DBMaker.memoryDB().make();
+ConcurrentMap map = db.hashMap(&amp;quot;map&amp;quot;).createOrOpen();
+map.put(&amp;quot;something&amp;quot;, &amp;quot;here&amp;quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このような感じで、メソッドチェーン形式で設定を行い、永続化機能つきのConcurrentMapをインスタンシエートするらしい。
+この形式で利用できるなら、既存のソースコードに組み込むだけで簡単に永続化できる気がします。
+こちらだとoff-heapに領域を確保するっぽいですね。
+off-heapの場合に永続化がされるかは未検証ですが、少なくともon-heapよりは高速化が期待できそうだし、ファイルストアとAPIが共通なのは嬉しい。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;DB db = DBMaker.fileDB(&amp;quot;file.db&amp;quot;).make();
+ConcurrentMap map = db.hashMap(&amp;quot;map&amp;quot;).createOrOpen();
+map.put(&amp;quot;something&amp;quot;, &amp;quot;here&amp;quot;);
+db.close();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;こちらはファイルに永続化する例。
+インスタンシエートするまではoff-heapと差異はあるけど、これは仕方ないですね。
+その後はAPIが共通なので、開発時にはoff-heapで、本番ではファイルで、とか使い分けができそう。&lt;/p&gt;
+
+&lt;p&gt;現段階で予想される難点として、DI層とどう組み合わせるかってことですね。
+いくらでもやり方はあるけれど、単にデフォルトコンストラクタをAOPで注入すると設定が入らないので、そこをどうするかは考えないといけない。
+まぁ永続化対象のクラスごとに型を作るなど、対策はありますのでそう大きな問題ではないです。&lt;/p&gt;
+
+&lt;h2 id=&#34;まとめ&#34;&gt;まとめ&lt;/h2&gt;
+
+&lt;p&gt;今回、Javaで使える軽量級のKVS的に使えるライブラリを3つ紹介しました。
+Chronicle DBとOrientDBはある程度しっかりと使いたい用途で、MapDBはカジュアルに利用する用途で使い勝手が良さそうかなと思います。&lt;/p&gt;
+
+&lt;p&gt;さて、MapDBを実際に使ってみるか&amp;hellip;。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>ルータの設定で固定IPを設定していたらハマった話</title>
       <link>https://kamichidu.github.io/post/2016/12/04-dhcp-client-identifier/</link>
       <pubDate>Sun, 04 Dec 2016 19:20:31 +0900</pubDate>
