@@ -6,8 +6,43 @@
     <description>Recent content on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Tue, 06 Dec 2016 01:17:43 +0900</lastBuildDate>
+    <lastBuildDate>Wed, 21 Dec 2016 20:52:31 +0900</lastBuildDate>
     <atom:link href="https://kamichidu.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Three.jsに入門してみました</title>
+      <link>https://kamichidu.github.io/post/2016/12/21-threejs-impression/</link>
+      <pubDate>Wed, 21 Dec 2016 20:52:31 +0900</pubDate>
+      
+      <guid>https://kamichidu.github.io/post/2016/12/21-threejs-impression/</guid>
+      <description>&lt;p&gt;最近、WebUIにおけるWebGLの活用に興味があり、その流れでThree.jsに入門してみました。
+わからないながら、Three.jsとWebRTCをシンプルに組み合わせて、テクスチャとしてデバイスのカメラを表示してみましたので、その際の所感をまとめます。&lt;/p&gt;
+
+&lt;p&gt;現物はこちら↓ &lt;br /&gt;
+リポジトリ: &lt;a href=&#34;https://github.com/kamichidu/js-sandbox-threejs&#34;&gt;https://github.com/kamichidu/js-sandbox-threejs&lt;/a&gt; &lt;br /&gt;
+デモ: &lt;a href=&#34;https://kamichidu.github.io/js-sandbox-threejs/&#34;&gt;https://kamichidu.github.io/js-sandbox-threejs/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;まず画面上部の選択欄から、カメラデバイスを選択し、隣のGoボタンを押すと画面中央にカメラからの入力が出てきます。
+それだけのシンプルプログラムです。&lt;/p&gt;
+
+&lt;p&gt;Three.jsのドキュメントを読んでいる間は、 &lt;code&gt;THREE&lt;/code&gt; を毎回打つのだるいなと思ってました（どうでもいい）。
+実際に書き初めてみると、意外と打ちにくくはなかったので、その点良かったと思います。&lt;/p&gt;
+
+&lt;p&gt;また私自身、OpenGLはCやC++、Goなどからやっていたことはありますが、大抵の場合生のAPIをいじっていたので、そちらのほうが戸惑いが大きかったように思います。
+『なんだこの楽さは』的な。&lt;/p&gt;
+
+&lt;p&gt;特に最近のバージョンからvideoタグと併用することで、簡単にカメラ入力をテクスチャ化することができるようになっており、大変便利でした。
+最初はWebRTCからカメラ入力取って、videoタグで読み込んで、canvasでキャプチャして&amp;hellip;という流れでやろうとしていたので、この点で驚かされました。&lt;/p&gt;
+
+&lt;p&gt;今回は時間がなくて試せなかったのですが、例えばスプライトにカメラ入力を貼り付けて、そのスプライトに対して拡大/縮小や、そのような効果をつけられると楽しそうな気がします。
+また、折角実世界の情報が入力されているので、リアルタイムでの測量やカメラ入力にオーバレイしての情報表示など試してみたい気持ちになりました。&lt;/p&gt;
+
+&lt;p&gt;昨今VRが騒がれていますが、私個人としては任意のシステムに対するより発展的なインタフェイスとしてのARに興味を持っています。
+そのため、WebRTCと合わせてWebGLなどを活用する道を模索していけたらな、と思っています。&lt;/p&gt;
+
+&lt;p&gt;以上、お付き合いいただきありがとうございました。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Javaで使える軽量級の永続化ライブラリ</title>
@@ -1122,125 +1157,6 @@ uniteのサポートは今後とも継続するつもりですが、あくまで
 なお、本格的な変更は次回のメジャーバージョンアップで行う予定です。&lt;/p&gt;
 
 &lt;p&gt;不具合や要望があれば、&lt;a href=&#34;https://github.com/kamichidu/vim-unite-javaimport/issues&#34;&gt;githubのissues&lt;/a&gt;までお願いいたします。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>json-docletの仕様メモ</title>
-      <link>https://kamichidu.github.io/post/2014/10/04-json-doclet-spec/</link>
-      <pubDate>Sat, 04 Oct 2014 00:00:00 +0900</pubDate>
-      
-      <guid>https://kamichidu.github.io/post/2014/10/04-json-doclet-spec/</guid>
-      <description>
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/kamichidu/java-json-doclet&#34;&gt;json-doclet&lt;/a&gt;はJavadocツール用のDoclet。
-標準Docletと違い、HTMLではなくJSONを吐き出します。&lt;/p&gt;
-
-&lt;p&gt;JSONでドキュメントを吐き出すため、アプリケーションからJavadocを利用することがHTMLに比べて容易です。
-以下、その仕様をまとめます。
-&lt;em&gt;開発中のため、予告なく仕様は変更になる可能性があります。&lt;/em&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id=&#34;許容する引数&#34;&gt;許容する引数&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;-ofile (必須)&lt;/p&gt;
-
-&lt;p&gt;出力するファイル名を指定する。&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;-append&lt;/p&gt;
-
-&lt;p&gt;-ofileで指定されたファイルに追記する。&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;-pretty&lt;/p&gt;
-
-&lt;p&gt;JSONを出力時、整形された状態で出力する。&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;出力されるjsonオブジェクト&#34;&gt;出力されるJSONオブジェクト&lt;/h3&gt;
-
-&lt;h4 id=&#34;a-name-root-object-ルートオブジェクト-a&#34;&gt;&lt;a name=&#34;root-object&#34;&gt;ルートオブジェクト&lt;/a&gt;&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;classes - &lt;a href=&#34;#class-object&#34;&gt;クラスオブジェクト&lt;/a&gt;の配列&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;a-name-class-object-クラスオブジェクト-a&#34;&gt;&lt;a name=&#34;class-object&#34;&gt;クラスオブジェクト&lt;/a&gt;&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;name - クラスの正規名&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;interfaces - クラスが実装しているインタフェイスの正規名の配列&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;superclass - 親クラスの正規名&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;comment_text - クラスに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;since - @sinceタグの情報&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;see - @seeタグの情報を持つ配列&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;constructors - &lt;a href=&#34;#constructor-object&#34;&gt;コンストラクタオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;fields - &lt;a href=&#34;#field-object&#34;&gt;フィールドオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;methods - &lt;a href=&#34;#method-object&#34;&gt;メソッドオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;a-name-constructor-object-コンストラクタオブジェクト-a&#34;&gt;&lt;a name=&#34;constructor-object&#34;&gt;コンストラクタオブジェクト&lt;/a&gt;&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;name - コンストラクタメソッドの正規名&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;comment_text - メソッドに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;parameters - &lt;a href=&#34;#method-parameter-object&#34;&gt;メソッドパラメータオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;throws - &lt;a href=&#34;#exception-object&#34;&gt;例外オブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;a-name-exception-object-例外オブジェクト-a&#34;&gt;&lt;a name=&#34;exception-object&#34;&gt;例外オブジェクト&lt;/a&gt;&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;name - 例外クラスの正規名&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;comment_text - @throwsタグに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;a-name-method-parameter-object-メソッドパラメータオブジェクト-a&#34;&gt;&lt;a name=&#34;method-parameter-object&#34;&gt;メソッドパラメータオブジェクト&lt;/a&gt;&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;name - 変数名&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;comment_text - @paramsタグに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;type - 型の正規名&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;a-name-field-object-フィールドオブジェクト-a&#34;&gt;&lt;a name=&#34;field-object&#34;&gt;フィールドオブジェクト&lt;/a&gt;&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;name - フィールド名&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;comment_text - フィールドに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;type - 型の正規名&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;a-name-method-object-メソッドオブジェクト-a&#34;&gt;&lt;a name=&#34;method-object&#34;&gt;メソッドオブジェクト&lt;/a&gt;&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;name - メソッドの正規名&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;comment_text - メソッドに付与されたJavadocコメント&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;parameters - &lt;a href=&#34;#method-parameter-object&#34;&gt;メソッドパラメータオブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;throws - &lt;a href=&#34;#exception-object&#34;&gt;例外オブジェクト&lt;/a&gt;の配列&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;return_type - メソッドから返却される型の正規名&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
 </description>
     </item>
     

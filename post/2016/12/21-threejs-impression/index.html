@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width">
-    <title>なるはやで いい感じの 動作確認</title>
+    <title>Three.jsに入門してみました &middot; なるはやで いい感じの 動作確認</title>
     <link rel="profile" href="https://gmpg.org/xfn/11">
     <!--[if lt IE 9]>
     <script src="https://kamichidu.github.io/js/html5.js"></script>
@@ -46,10 +46,11 @@ ga('send', 'pageview');
 
 
 <div id="main-content" class="main-content">
-    <div id="primary" class="content-area">
-        <div id="content" class="site-content" role="main">
-            
-                <article class="post type-post status-publish format-standard hentry">
+
+	<div id="primary" class="content-area">
+		<div id="content" class="site-content" role="main">
+
+			<article class="post type-post status-publish format-standard hentry">
 
     
     <header class="entry-header">
@@ -64,7 +65,7 @@ ga('send', 'pageview');
             </span>
         </div>
 
-        <h1 class="entry-title"><a href="https://kamichidu.github.io/post/2016/12/21-threejs-impression/">Three.jsに入門してみました</a></h1>
+        <h1 class="entry-title">Three.jsに入門してみました</h1>
 
         <div class="entry-meta">
             <span class="entry-date">
@@ -79,11 +80,37 @@ ga('send', 'pageview');
     </header>
 
     <div class="entry-content">
-        最近、WebUIにおけるWebGLの活用に興味があり、その流れでThree.jsに入門してみました。 わからないながら、Three.jsとWe...
+        <p>最近、WebUIにおけるWebGLの活用に興味があり、その流れでThree.jsに入門してみました。
+わからないながら、Three.jsとWebRTCをシンプルに組み合わせて、テクスチャとしてデバイスのカメラを表示してみましたので、その際の所感をまとめます。</p>
+
+<p>現物はこちら↓ <br />
+リポジトリ: <a href="https://github.com/kamichidu/js-sandbox-threejs">https://github.com/kamichidu/js-sandbox-threejs</a> <br />
+デモ: <a href="https://kamichidu.github.io/js-sandbox-threejs/">https://kamichidu.github.io/js-sandbox-threejs/</a></p>
+
+<p>まず画面上部の選択欄から、カメラデバイスを選択し、隣のGoボタンを押すと画面中央にカメラからの入力が出てきます。
+それだけのシンプルプログラムです。</p>
+
+<p>Three.jsのドキュメントを読んでいる間は、 <code>THREE</code> を毎回打つのだるいなと思ってました（どうでもいい）。
+実際に書き初めてみると、意外と打ちにくくはなかったので、その点良かったと思います。</p>
+
+<p>また私自身、OpenGLはCやC++、Goなどからやっていたことはありますが、大抵の場合生のAPIをいじっていたので、そちらのほうが戸惑いが大きかったように思います。
+『なんだこの楽さは』的な。</p>
+
+<p>特に最近のバージョンからvideoタグと併用することで、簡単にカメラ入力をテクスチャ化することができるようになっており、大変便利でした。
+最初はWebRTCからカメラ入力取って、videoタグで読み込んで、canvasでキャプチャして&hellip;という流れでやろうとしていたので、この点で驚かされました。</p>
+
+<p>今回は時間がなくて試せなかったのですが、例えばスプライトにカメラ入力を貼り付けて、そのスプライトに対して拡大/縮小や、そのような効果をつけられると楽しそうな気がします。
+また、折角実世界の情報が入力されているので、リアルタイムでの測量やカメラ入力にオーバレイしての情報表示など試してみたい気持ちになりました。</p>
+
+<p>昨今VRが騒がれていますが、私個人としては任意のシステムに対するより発展的なインタフェイスとしてのARに興味を持っています。
+そのため、WebRTCと合わせてWebGLなどを活用する道を模索していけたらな、と思っています。</p>
+
+<p>以上、お付き合いいただきありがとうございました。</p>
+
     </div>
 
     <footer class="entry-meta">
-        <span class="tag-links">        
+        <span class="tag-links">
             
                 <a href="https://kamichidu.github.io/tags/three.js/index.html" rel="tag">Three.js</a>
             
@@ -95,53 +122,27 @@ ga('send', 'pageview');
     </footer>
 </article> 
 
-            
-                <article class="post type-post status-publish format-standard hentry">
 
-    
-    <header class="entry-header">
+			<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'naruhaya';
+    var disqus_identifier = 'https:\/\/kamichidu.github.io\/post\/2016\/12\/21-threejs-impression\/';
+    var disqus_title = 'Three.jsに入門してみました';
+    var disqus_url = 'https:\/\/kamichidu.github.io\/post\/2016\/12\/21-threejs-impression\/';
 
-    
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+		
+		</div>
 
-        <div class="entry-meta">
-            <span class="cat-links">
-                
-                <a href="https://kamichidu.github.io/categories/article/index.html" rel="category">Article</a>
-                
-            </span>
-        </div>
-
-        <h1 class="entry-title"><a href="https://kamichidu.github.io/post/2016/09/20-collecting-error-log-on-the-browser/">ブラウザ上でのJavaScriptエラーを収集する手法について</a></h1>
-
-        <div class="entry-meta">
-            <span class="entry-date">
-                <a href="https://kamichidu.github.io/post/2016/09/20-collecting-error-log-on-the-browser//index.html" rel="bookmark">
-                    <time class="entry-date" datetime="2016-09-20 00:00:00 &#43;0900 JST">
-                        2016 Sep 20
-                    </time>
-                </a>
-            </span>
-        </div>
-
-    </header>
-
-    <div class="entry-content">
-        現代的なWebサービスを構築する場合、避けては通れないのが各種ログの収集と活用です。 HTTPサーバの各種ログ (e.g. アクセスログ、エラーログ) を始...
-    </div>
-
-    <footer class="entry-meta">
-        <span class="tag-links">        
-            
-                <a href="https://kamichidu.github.io/tags/javascript/index.html" rel="tag">JavaScript</a>
-            
-        </span>
-    </footer>
-</article> 
-
-            
-        </div>
-    </div>
-    <div id="secondary">
+	</div>
+	<div id="secondary">
 
     
 
@@ -245,19 +246,6 @@ ga('send', 'pageview');
 
         <aside id="archives-3" class="widget widget_archives">
 
-    
-    <h1 class="widget-title">Archives</h1>
-    <ul>
-        
-        <li class="cat-item">
-            <a href="https://kamichidu.github.io/post/2016/12/21-threejs-impression/">Three.jsに入門してみました</a>
-        </li>
-        
-        <li class="cat-item">
-            <a href="https://kamichidu.github.io/post/2016/09/20-collecting-error-log-on-the-browser/">ブラウザ上でのJavaScriptエラーを収集する手法について</a>
-        </li>
-        
-    </ul>
     
 
 </aside>
