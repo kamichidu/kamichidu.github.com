@@ -1,13 +1,68 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Post-rsses on なるはやで いい感じの 動作確認</title>
+    <title>Posts on なるはやで いい感じの 動作確認</title>
     <link>https://kamichidu.github.io/post/index.xml</link>
-    <description>Recent content in Post-rsses on なるはやで いい感じの 動作確認</description>
+    <description>Recent content in Posts on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Wed, 21 Dec 2016 20:52:31 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 25 Dec 2016 20:03:08 +0900</lastBuildDate>
     <atom:link href="https://kamichidu.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Vimをサーバとして稼動させる</title>
+      <link>https://kamichidu.github.io/post/2016/12/25-vim-as-a-server/</link>
+      <pubDate>Sun, 25 Dec 2016 20:03:08 +0900</pubDate>
+      
+      <guid>https://kamichidu.github.io/post/2016/12/25-vim-as-a-server/</guid>
+      <description>&lt;p&gt;さて、みなさん大好きテキストエディタのVimですが、実はサーバとして稼動させることができることをご存じでしょうか。&lt;br /&gt;
+&lt;a href=&#34;http://mattn.kaoriya.net/software/vim/20120127204609.htm&#34;&gt;参考&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Vimにも比較的最近、ソケット通信を扱うためのChannel機能というものが入りました。
+そこで、2016年最後のネタとして、VimのChannel機能を使い、Vim Scriptでecho serverを実装してみようと思います。&lt;/p&gt;
+
+&lt;p&gt;まず、Vim本体に以下のパッチを当ててください。
+このパッチは、私が開発に利用しているArch Linuxでしか動作確認を取っておらず、面倒だったのでWinSock対応はしておりません。
+また、既存のChannel機能に無理矢理合わせるために、開いたソケットを閉じるなどの処理を一切省いてしまいました。
+片手落ち感は否めませんが、ここで重要なのは『Vim Scriptでecho serverを実装したい』という願望を叶えることと割り切りました。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gist.github.com/anonymous/558d625b8be4d8cf7a913381c851fec6&#34;&gt;パッチはこちら&lt;/a&gt;&lt;br /&gt;
+※gistaの設定をミスって、anonymousとして上がってしまいました&amp;hellip;.&lt;/p&gt;
+
+&lt;p&gt;パッチを当てたVimをmakeすると、src/vimが出来あがります。
+では早速、Vim Scriptを書いていきましょう。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;let ch= ch_listen(&#39;0.0.0.0:12345&#39;, {
+\   &#39;mode&#39;: &#39;raw&#39;,
+\   &#39;waittime&#39;: -1,
+\})
+while 1
+    let st= ch_status(ch)
+    echomsg st
+    if st ==# &#39;fail&#39; || st ==# &#39;closed&#39;
+        break
+    endif
+
+    let msg= ch_readraw(ch)
+    echomsg &#39;Received: &#39; . msg
+    if !empty(msg)
+        call ch_sendraw(ch, msg)
+    endif
+endwhile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;さて、このVim Scriptを &lt;code&gt;echo-server.vim&lt;/code&gt; として保存し、 &lt;code&gt;./src/vim -N -u NONE -U NONE --noplugin -S echo-server.vim&lt;/code&gt; を実行しましょう。
+おめでとうございます、 &lt;code&gt;netstat -tanlp&lt;/code&gt; すると、12345ポートでVimがListenしている勇姿が見えるでしょうか。&lt;/p&gt;
+
+&lt;p&gt;動作確認に入ります。
+&lt;code&gt;telnet 127.0.0.1 12345&lt;/code&gt; を実行し、何か打ってみてください。
+Vimがechoを返してくるはずです。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://kamichidu.github.io/images/2016-12-25-demo.gif&#34; alt=&#34;動作の様子&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;以上、ネタでした。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Three.jsに入門してみました</title>
@@ -1094,69 +1149,6 @@ let g:quickrun_config[&#39;watchdogs_checker/javac&#39;]= {
 vim-javaclasspathが対応している限り、特に自分で何かしなくてもwatchdogsで非同期チェックが可能になります。&lt;/p&gt;
 
 &lt;p&gt;参考までに、私のqfixwindow関係の設定は、&lt;a href=&#34;http://d.hatena.ne.jp/thinca/20130708/1373210009&#34;&gt;thincaさんの記事&lt;/a&gt;を参考に入れています。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>unite-javaimportがメジャーバージョンアップしました</title>
-      <link>https://kamichidu.github.io/post/2014/10/19-release-note-for-unite-javaimport/</link>
-      <pubDate>Sun, 19 Oct 2014 00:00:00 +0900</pubDate>
-      
-      <guid>https://kamichidu.github.io/post/2014/10/19-release-note-for-unite-javaimport/</guid>
-      <description>&lt;p&gt;今までバージョン0.2.xだった&lt;a href=&#34;https://github.com/kamichidu/vim-unite-javaimport&#34;&gt;unite-javaimport&lt;/a&gt;が、この度0.3.xになりました。
-内部構造が大幅に変更されているため、0.2.xと比べて&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;メモリ使用量の削減&lt;/p&gt;
-
-&lt;p&gt;0.2.xでは500M程使ってしまっていましたが、大きく改善されています。&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;速度の向上&lt;/p&gt;
-
-&lt;p&gt;0.2.xでは内部的にローカルサーバを立ち上げて、javaimportが起動されるごとに計算を行っていました。
-0.3.xでは主にキャッシュ周りのファイル構成を見直し、一度起動した後は主にキャッシュから候補を取得するため、速度が向上しました。&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;以上の点が改善されています。&lt;/p&gt;
-
-&lt;p&gt;また、新規機能の追加として、&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;static import機能の追加&lt;/p&gt;
-
-&lt;p&gt;以下のunite-sourceが追加されています。&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;javaimport/field&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;javaimport/method&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;また同時に、javaimport/classのアクションにexpandが追加されています。
-javaimport/classで選択したクラスをjavaimport/fieldおよびjavaimport/methodに渡して起動することができます。&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://github.com/ctrlpvim/ctrlp.vim&#34;&gt;ctrlp&lt;/a&gt;をサポートしました&lt;/p&gt;
-
-&lt;p&gt;以下のコマンドが追加されています。
-ただしhelpはまだないので、実験的なものとなります。&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;CtrlPJavaImportClass&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;CtrlPJavaImportField&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;CtrlPJavaImportMethod&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;以上の機能が追加されています。&lt;/p&gt;
-
-&lt;p&gt;また今後の開発についてですが、unite-sourceを主として開発するのではなく、メインのUIを別に作成することを考えています。
-uniteのサポートは今後とも継続するつもりですが、あくまでjavaimportのサポートする1つのインタフェイスという位置付けになります。
-今回ctrlpのサポートを追加したのも、この変更に対する伏線の意図があります。
-なお、本格的な変更は次回のメジャーバージョンアップで行う予定です。&lt;/p&gt;
-
-&lt;p&gt;不具合や要望があれば、&lt;a href=&#34;https://github.com/kamichidu/vim-unite-javaimport/issues&#34;&gt;githubのissues&lt;/a&gt;までお願いいたします。&lt;/p&gt;
 </description>
     </item>
     

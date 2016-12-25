@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>なるはやで いい感じの 動作確認</title>
+    <title>Go on なるはやで いい感じの 動作確認</title>
     <link>https://kamichidu.github.io/tags/go/index.xml</link>
-    <description>Recent content on なるはやで いい感じの 動作確認</description>
+    <description>Recent content in Go on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <atom:link href="https://kamichidu.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />

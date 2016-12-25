@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>なるはやで いい感じの 動作確認</title>
+    <link rel="profile" href="https://gmpg.org/xfn/11">
+    <!--[if lt IE 9]>
+    <script src="https://kamichidu.github.io/js/html5.js"></script>
+    <![endif]-->
+
+    <link href="https://kamichidu.github.io/index.xml" rel="alternate" type="application/rss+xml" title="なるはやで いい感じの 動作確認" />
+
+    <link rel='stylesheet' id='twentyfourteen-lato-css'  href='https://fonts.googleapis.com/css?family=Lato%3A300%2C400%2C700%2C900%2C300italic%2C400italic%2C700italic&#038;subset=latin%2Clatin-ext' type='text/css' media='all' />
+
+    <link rel='stylesheet' id='genericons-css' href='https://kamichidu.github.io/genericons/genericons.css' type='text/css' media='all' />
+    <link rel='stylesheet' id='twentyfourteen-style-css' href='https://kamichidu.github.io/css/style.css' type='text/css' media='all' />
+    
+    <script type='text/javascript' src='https://kamichidu.github.io/js/jquery/jquery.js'></script>
+    <script type='text/javascript' src='https://kamichidu.github.io/js/jquery/jquery-migrate.min.js'></script>
+    <style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+
+    <link rel="stylesheet" href="https://kamichidu.github.io/css/custom.css">
+    
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-71082560-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+</head>
+
+<body class="home blog masthead-fixed list-view full-width grid">
+<div id="page" class="hfeed site">
+    <header id="masthead" class="site-header" role="banner">
+        <div class="header-main">
+            <h1 class="site-title"><a href="https://kamichidu.github.io/index.html" rel="home">なるはやで いい感じの 動作確認</a></h1>
+        </div>
+    </header>
+
+    <div id="main" class="site-main">
+
+
+<div id="main-content" class="main-content">
+    <div id="primary" class="content-area">
+        <div id="content" class="site-content" role="main">
+            
+                <article class="post type-post status-publish format-standard hentry">
+
+    
+    <header class="entry-header">
+
+    
+
+        <div class="entry-meta">
+            <span class="cat-links">
+                
+                <a href="https://kamichidu.github.io/categories/article/index.html" rel="category">Article</a>
+                
+            </span>
+        </div>
+
+        <h1 class="entry-title"><a href="https://kamichidu.github.io/post/2016/12/21-threejs-impression/">Three.jsに入門してみました</a></h1>
+
+        <div class="entry-meta">
+            <span class="entry-date">
+                <a href="https://kamichidu.github.io/post/2016/12/21-threejs-impression//index.html" rel="bookmark">
+                    <time class="entry-date" datetime="2016-12-21 20:52:31 &#43;0900 JST">
+                        2016 Dec 21
+                    </time>
+                </a>
+            </span>
+        </div>
+
+    </header>
+
+    <div class="entry-content">
+        最近、WebUIにおけるWebGLの活用に興味があり、その流れでThree.jsに入門してみました。 わからないながら、Three.jsとWe...
+    </div>
+
+    <footer class="entry-meta">
+        <span class="tag-links">        
+            
+                <a href="https://kamichidu.github.io/tags/three.js/index.html" rel="tag">Three.js</a>
+            
+                <a href="https://kamichidu.github.io/tags/webrtc/index.html" rel="tag">WebRTC</a>
+            
+                <a href="https://kamichidu.github.io/tags/javascript/index.html" rel="tag">JavaScript</a>
+            
+        </span>
+    </footer>
+</article> 
+
+            
+        </div>
+    </div>
+    <div id="secondary">
+
+    
+
+    <div id="primary-sidebar" class="primary-sidebar widget-area" role="complementary">
+
+        <script type="text/javascript">
+    function site_search(obj) {
+    	var host = window.location.host;
+        obj.q.value = "site:" + host + " " + obj.ss_q.value;
+    }
+</script>
+
+<aside id="search-3" class="widget widget_search">
+	<form role="search" class="search-form" action="//www.google.com/search" method="get" onSubmit="site_search(this)">
+
+	<input name="q" type="hidden" />
+	    <label>
+	        <span class="screen-reader-text">Search for:</span>
+	        <input name="ss_q" type="text" placeholder="Search ..." class="search-field" />
+	    </label>
+	    <input type="submit" value="Search" class="search-submit" />
+	</form>
+</aside>
+
+        <aside id="profile-3" class="widget widget_profile">
+
+    <h1 class="widget-title">Profile</h1>
+    <div>
+        
+        <p>
+            kamichidu
+        </p>
+        <p>
+            <a href="https://github.com/kamichidu" target="_blank"><img src="https://kamichidu.github.io/logos/github-light-32px.png"></a>
+            <a href="https://twitter.com/kamichidu" target="_blank"><img src="https://kamichidu.github.io/logos/twitter.svg"></a>
+        </p>
+    </div>
+
+</aside>
+
+
+        <aside id="categories-3" class="widget widget_categories">
+	
+	<h1 class="widget-title">Categories</h1>
+
+	<ul>
+		
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/announcement/index.html">Announcement</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/article/index.html">Article</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/development/index.html">Development</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/notice/index.html">Notice</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/report/index.html">Report</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/research/index.html">Research</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/tips/index.html">Tips</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/vim/index.html">Vim</a>
+		</li>
+
+		
+
+	</ul>
+
+</aside>
+
+        <aside id="archives-3" class="widget widget_archives">
+
+    
+    <h1 class="widget-title">Archives</h1>
+    <ul>
+        
+        <li class="cat-item">
+            <a href="https://kamichidu.github.io/post/2016/12/21-threejs-impression/">Three.jsに入門してみました</a>
+        </li>
+        
+    </ul>
+    
+
+</aside>
+
+
+    </div>
+
+</div>
+
+</div>
+
+		</div>
+
+		<footer id="colophon" class="site-footer" role="contentinfo">
+
+			<div class="site-info">
+				<a href="http://gohugo.io">Proudly powered by Hugo</a>
+			</div>
+		</footer>
+	</div>
+
+	<script type='text/javascript' src='https://kamichidu.github.io/js/functions.js'></script>
+</body>
+</html>
