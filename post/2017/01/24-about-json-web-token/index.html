@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ja-jp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>JSON Web Token（JWT）のClaimについて &middot; なるはやで いい感じの 動作確認</title>
+    <link rel="profile" href="https://gmpg.org/xfn/11">
+    <!--[if lt IE 9]>
+    <script src="https://kamichidu.github.io/js/html5.js"></script>
+    <![endif]-->
+
+    <link href="https://kamichidu.github.io/index.xml" rel="alternate" type="application/rss+xml" title="なるはやで いい感じの 動作確認" />
+
+    <link rel='stylesheet' id='twentyfourteen-lato-css'  href='https://fonts.googleapis.com/css?family=Lato%3A300%2C400%2C700%2C900%2C300italic%2C400italic%2C700italic&#038;subset=latin%2Clatin-ext' type='text/css' media='all' />
+
+    <link rel='stylesheet' id='genericons-css' href='https://kamichidu.github.io/genericons/genericons.css' type='text/css' media='all' />
+    <link rel='stylesheet' id='twentyfourteen-style-css' href='https://kamichidu.github.io/css/style.css' type='text/css' media='all' />
+    
+    <script type='text/javascript' src='https://kamichidu.github.io/js/jquery/jquery.js'></script>
+    <script type='text/javascript' src='https://kamichidu.github.io/js/jquery/jquery-migrate.min.js'></script>
+    <style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+
+    <link rel="stylesheet" href="https://kamichidu.github.io/css/custom.css">
+    
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-71082560-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+</head>
+
+<body class="home blog masthead-fixed list-view full-width grid">
+<div id="page" class="hfeed site">
+    <header id="masthead" class="site-header" role="banner">
+        <div class="header-main">
+            <h1 class="site-title"><a href="https://kamichidu.github.io/index.html" rel="home">なるはやで いい感じの 動作確認</a></h1>
+        </div>
+    </header>
+
+    <div id="main" class="site-main">
+
+
+<div id="main-content" class="main-content">
+
+	<div id="primary" class="content-area">
+		<div id="content" class="site-content" role="main">
+
+			<article class="post type-post status-publish format-standard hentry">
+
+    
+    <header class="entry-header">
+
+    
+
+        <div class="entry-meta">
+            <span class="cat-links">
+                
+                <a href="https://kamichidu.github.io/categories/article/index.html" rel="category">Article</a>
+                
+            </span>
+        </div>
+
+        <h1 class="entry-title">JSON Web Token（JWT）のClaimについて</h1>
+
+        <div class="entry-meta">
+            <span class="entry-date">
+                <a href="https://kamichidu.github.io/post/2017/01/24-about-json-web-token//index.html" rel="bookmark">
+                    <time class="entry-date" datetime="2017-01-24 19:19:50 &#43;0900 JST">
+                        2017 Jan 24
+                    </time>
+                </a>
+            </span>
+        </div>
+
+    </header>
+
+    <div class="entry-content">
+        
+
+<p>REST APIなどを開発すると、避けては通れないものに認証があります。
+最近はOAuth2 Providerを実装することが多いのですが、発行するアクセストークンにJSON Web Token（JWT）を利用しています。
+JWTは名前の通り、<a href="https://tools.ietf.org/html/rfc7519">RFC7519</a>によって定義されたスキーマを持つJSONです。
+JSONの各キーとして、RFCで定義されている標準的なキーと値のペア（Claim）を取ることにより、標準的な取り扱いが可能になります。</p>
+
+<p>本記事では、JWTのClaimについて、OAuth2 Providerでのアクセストークンを発行する立場から、備忘録的にまとめたいと思います。</p>
+
+<p>なお、JWTには<a href="https://tools.ietf.org/html/rfc7519#section-5">JOSE Header</a>のような、Claimとは別の仕様も含まれていますが、本記事ではClaimのみを対象とします。</p>
+
+<h2 id="アクセストークンとしてjwtを利用することの利点">アクセストークンとしてJWTを利用することの利点</h2>
+
+<p>JWTは単なるJSONのため、アクセストークンとして用いることにより様々な情報を含めることができます。
+それにより、認証サーバとアプリケーションサーバを分割しているようなアーキテクチャであれば、認証サーバの負荷を軽減することに寄与します。
+<a href="http://d.hatena.ne.jp/ritou/20140927/1411811648">こちらの記事がよくまとまっており、わかりやすいです。</a></p>
+
+<p>また、本記事の範囲からは離れますが、JWTと関連する<a href="https://tools.ietf.org/html/rfc7516">JSON Web Encryption（JWE）</a>や
+<a href="https://tools.ietf.org/html/rfc7515">JSON Web Signature（JWS）</a>などと併用することにより、
+規格化された方法のみで一般的なREST APIの認証で必要となる要件を満たすことができます。
+規格化されているため、技術者間の共通言語としても利用できますし、サービスごとに独自仕様を策定するという無駄な手間を省くことができます。</p>
+
+<h2 id="claimの種類">Claimの種類</h2>
+
+<p>JWTには、<a href="https://tools.ietf.org/html/rfc7519#section-4">3種類のClaimが定義されています。</a>
+ここでは、それぞれのClaimについて簡単に説明します。</p>
+
+<h3 id="registered-claim-names">Registered Claim Names</h3>
+
+<p>IANAの&rdquo;JSON Web Token Claims&rdquo;に登録された、一般的な用途で利用されることを想定されたClaimです。
+基本的にこれらのClaimの利用は任意ですが、JWTを発行する際には可能な限り含めておいたほうが良いと思います。</p>
+
+<ul>
+<li><p>&ldquo;iss&rdquo; (Issuer) (Optional)</p>
+
+<p>JWTの発行者を意味します。
+値として文字列かURIを取ることができ、アプリケーション名やドメイン名が入ると思います。
+値は大文字/小文字を区別して扱われます。</p></li>
+
+<li><p>&ldquo;sub&rdquo; (Subject) (Optional)</p>
+
+<p>JWTの用途を意味します。
+値として文字列かURIを取ることができます。
+値は大文字/小文字が区別され、同じIssuer内でユニーク、または全世界でユニークである必要があります。</p></li>
+
+<li><p>&ldquo;aud&rdquo; (Audience) (Optional)</p>
+
+<p>JWTの想定利用者を意味します。
+値として文字列かURI、またはそれらの配列を取ることができます。
+値は大文字/小文字が区別されます。</p>
+
+<p>発行する側はJWTの発行要求をしてきた相手を識別する文字列やURIを入れ込み、
+発行された側はAudience Claimが存在する場合は自分向けに発行されたJWTなのかどうかを検証することに用います。</p></li>
+
+<li><p>&ldquo;exp&rdquo; (Expiration Time) (Optional)</p>
+
+<p>JWTが失効する日時を意味します。
+値としては、数値表現された日付となります。（例: &ldquo;12345&rdquo;）</p>
+
+<p>失効する日時を表すUNIX時刻などを入れるのが良いと思います。</p></li>
+
+<li><p>&ldquo;nbf&rdquo; (Not Before) (Optional)</p>
+
+<p>JWTが有効になる日時を意味します。
+取り得る値は&rdquo;exp&rdquo;と同様です。</p></li>
+
+<li><p>&ldquo;iat&rdquo; (Issued At) (Optional)</p>
+
+<p>JWTが発行された日時を意味します。
+取り得る値は&rdquo;exp&rdquo;や&rdquo;nbf&rdquo;と同様です。</p></li>
+
+<li><p>&ldquo;jti&rdquo; (JWT ID) (Optional)</p>
+
+<p>JWTのユニーク性を担保するID値を意味します。
+&ldquo;jti&rdquo;が異なるJWTは、全く別のJWTとして扱われます。
+値は大文字/小文字が区別されます。</p>
+
+<p>&ldquo;jti&rdquo;の存在は、同じJWTを使い回すことを抑制することを目的にしています。
+JWTの発行ごとに、UUIDでも入れておくのが良いのでしょうか。</p></li>
+</ul>
+
+<h3 id="public-claim-names">Public Claim Names</h3>
+
+<p><a href="https://www.iana.org/assignments/jwt/jwt.xhtml">IANA &ldquo;JSON Web Token Claims&rdquo;</a>に登録されているClaimを言います。
+Registered Claimは基本的にIANAに登録されており、Registered ClaimはPublic Claimのサブセットになっています。
+Public ClaimはIANAに登録されたClaimを言い、主に汎用的な用途のClaimを衝突する可能性を（仕様的な意味で）排除する目的で利用されます。</p>
+
+<p>一般的なサービスを開発するとかいう場合には、恐らくこの種類のClaimを使うことはないでしょう。</p>
+
+<h3 id="private-claim-names">Private Claim Names</h3>
+
+<p>このClaimは、JWTのIssuerとAudienceの間で取り決めされた仕様に応じて何でも定義することができ、
+Private ClaimはRegistered ClaimやPublic Claimで予約された以外の名前を使うことができます。
+JWTをアクセストークンとして利用する場合は、大抵Private Claimにガシガシ値を突っ込んでいくことになります。</p>
+
+<p>基本的にはどのような値も入れることはできますが、Claim名の衝突を避けるため、プレフィクスや企業のドメイン名をつけるなど工夫をしたほうが良いと思います。</p>
+
+<h2 id="アクセストークンの構築例">アクセストークンの構築例</h2>
+
+<p>ここでは今まで説明した内容を踏まえて、実際のアクセストークンがどのようになるかを説明します。</p>
+
+<h3 id="想定ケース">想定ケース</h3>
+
+<p>想定するサービスは、ログインユーザの情報として以下を持つとします。</p>
+
+<ol>
+<li>ユーザID</li>
+<li>ユーザ名</li>
+<li>メールアドレス</li>
+<li>年齢</li>
+<li>性別</li>
+</ol>
+
+<p>また、サービスは当然独自のドメイン（example.com）を持っているものとし、
+認証系と機能系はそれぞれサブドメイン（idp.example.comとapi.example.com）で構成されているとします。</p>
+
+<h3 id="アクセストークン設計">アクセストークン設計</h3>
+
+<p>アクセストークンとしてJWTを発行するのは認証系であり、発行されたJWTを利用するのは機能系となります。
+場合によっては、認証系にはユーザ情報を検索する等の機能が含まれている場合もありますので、それも加味します。
+つまりJWTの発行者はidp.example.comとなり、想定利用者はapi.example.comおよびidp.example.comとなります。</p>
+
+<p>発行するJWTの用途としては、アクセストークンです。
+セキュリティを考えて、発行から1時間で失効するのが良いでしょう。
+また、発行したJWTが有効になる時刻は、各サーバで時刻同期が仮にずれていた場合を考えて発行時刻の5秒前としましょう。</p>
+
+<p>以上をまとめると、Registered ClaimのみでJWTを構成すると以下のようになります。</p>
+
+<pre><code>{
+  &quot;jti&quot;: &quot;92f46647-90a2-4174-bca9-27d7f69a8fb7&quot;,
+  &quot;iss&quot;: &quot;https://idp.example.com/&quot;,
+  &quot;sub&quot;: &quot;AccessToken&quot;,
+  &quot;aud&quot;: [
+    &quot;https://api.example.com/&quot;,
+    &quot;https://idp.example.com/&quot;
+  ],
+  &quot;exp&quot;: 1485320878,
+  &quot;nbf&quot;: 1485317273,
+  &quot;iat&quot;: 1485317278
+}
+</code></pre>
+
+<p>続いてサービスに固有のClaimを考えます。
+Private Claimとして、ログインユーザの情報をすべて含めてしまいましょう。
+名前が衝突するのを防止するため、idp.example.comをプレフィクスとして構成することにし、
+ユーザ情報の各属性を、そのまま英語に直したものをサフィックスとしてしまいましょう。</p>
+
+<p>例として以下のようなユーザ情報を考えます。
+（golangのstructで示します。）</p>
+
+<pre><code>user := &amp;struct{
+	Id    string
+	Name  string
+	Email string
+	Age   int
+	Sex   string
+}{
+	Id:    &quot;72f5fbcc-75bb-4393-b2dd-76e74ad0fd87&quot;,
+	Name:  &quot;pico jiro&quot;,
+	Email: &quot;picojiro@example.com&quot;,
+	Age:   30,
+	Sex:   &quot;male&quot;,
+}
+</code></pre>
+
+<p>このユーザ情報からPrivate Claimを構成すると以下のようになります。</p>
+
+<pre><code>{
+  &quot;https://idp.example.com/claim-types/user-id&quot;: &quot;72f5fbcc-75bb-4393-b2dd-76e74ad0fd87&quot;,
+  &quot;https://idp.example.com/claim-types/user-name&quot;: &quot;pico jiro&quot;,
+  &quot;https://idp.example.com/claim-types/user-email&quot;: &quot;picojiro@example.com&quot;,
+  &quot;https://idp.example.com/claim-types/user-age&quot;: 30,
+  &quot;https://idp.example.com/claim-types/user-sex&quot;: &quot;male&quot;
+}
+</code></pre>
+
+<p>Registered ClaimとPrivate Claimを合わせて、最終的に以下のようなJWTが得られました。</p>
+
+<pre><code>{
+  &quot;jti&quot;: &quot;37852e99-ab54-460c-92b2-18231d3ba823&quot;,
+  &quot;iss&quot;: &quot;https://idp.example.com/&quot;,
+  &quot;sub&quot;: &quot;AccessToken&quot;,
+  &quot;aud&quot;: [
+    &quot;https://api.example.com/&quot;,
+    &quot;https://idp.example.com/&quot;
+  ],
+  &quot;exp&quot;: 1485322113,
+  &quot;nbf&quot;: 1485318508,
+  &quot;iat&quot;: 1485318513,
+  &quot;https://idp.example.com/claim-types/user-id&quot;: &quot;72f5fbcc-75bb-4393-b2dd-76e74ad0fd87&quot;,
+  &quot;https://idp.example.com/claim-types/user-name&quot;: &quot;pico jiro&quot;,
+  &quot;https://idp.example.com/claim-types/user-email&quot;: &quot;picojiro@example.com&quot;,
+  &quot;https://idp.example.com/claim-types/user-age&quot;: 30,
+  &quot;https://idp.example.com/claim-types/user-sex&quot;: &quot;male&quot;
+}
+</code></pre>
+
+<h2 id="まとめ">まとめ</h2>
+
+<p>JWTのClaimについて、REST API等のアクセストークンに適用するという観点から仕様をまとめました。
+またアクセストークンを構築する例を通して、実際にアクセストークンとしてJWTを適用する方法について説明しました。</p>
+
+<p>JWTはJWEやJWSと組み合わせて、セキュアなアクセストークンの仕組みを標準的な方法で構築することができるため、非常に有用だと思います。</p>
+
+<p>今回アクセストークンの例を出力するために書いたgolangのコードを貼っておきますので、参考程度にどうぞ。
+なおJWTの確認には、<a href="https://jwt.io">jwt.io</a>が便利です。</p>
+
+<pre><code>package main
+
+import (
+	&quot;time&quot;
+
+	&quot;github.com/dgrijalva/jwt-go&quot;
+	&quot;github.com/satori/go.uuid&quot;
+)
+
+func main() {
+	user := &amp;struct {
+		Id    string
+		Name  string
+		Email string
+		Age   int
+		Sex   string
+	}{
+		Id:    &quot;72f5fbcc-75bb-4393-b2dd-76e74ad0fd87&quot;,
+		Name:  &quot;pico jiro&quot;,
+		Email: &quot;picojiro@example.com&quot;,
+		Age:   30,
+		Sex:   &quot;male&quot;,
+	}
+	now := time.Now()
+	token := jwt.NewWithClaims(jwt.SigningMethodNone, jwt.MapClaims{
+		&quot;iss&quot;: &quot;https://idp.example.com/&quot;,
+		&quot;sub&quot;: &quot;AccessToken&quot;,
+		&quot;aud&quot;: []string{&quot;https://api.example.com/&quot;, &quot;https://idp.example.com/&quot;},
+		&quot;exp&quot;: now.Add(1 * time.Hour).Unix(),
+		&quot;nbf&quot;: now.Add(-5 * time.Second).Unix(),
+		&quot;iat&quot;: now.Unix(),
+		&quot;jti&quot;: uuid.NewV4().String(),
+		&quot;https://idp.example.com/claim-types/user-id&quot;:    user.Id,
+		&quot;https://idp.example.com/claim-types/user-name&quot;:  user.Name,
+		&quot;https://idp.example.com/claim-types/user-email&quot;: user.Email,
+		&quot;https://idp.example.com/claim-types/user-age&quot;:   user.Age,
+		&quot;https://idp.example.com/claim-types/user-sex&quot;:   user.Sex,
+	})
+	s, _ := token.SigningString()
+	println(s)
+}
+</code></pre>
+
+    </div>
+
+    <footer class="entry-meta">
+        <span class="tag-links">
+            
+                <a href="https://kamichidu.github.io/tags/jwt/index.html" rel="tag">JWT</a>
+            
+        </span>
+    </footer>
+</article> 
+
+
+			<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'naruhaya';
+    var disqus_identifier = 'https:\/\/kamichidu.github.io\/post\/2017\/01\/24-about-json-web-token\/';
+    var disqus_title = 'JSON Web Token（JWT）のClaimについて';
+    var disqus_url = 'https:\/\/kamichidu.github.io\/post\/2017\/01\/24-about-json-web-token\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+		
+		</div>
+
+	</div>
+	<div id="secondary">
+
+    
+
+    <div id="primary-sidebar" class="primary-sidebar widget-area" role="complementary">
+
+        <script type="text/javascript">
+    function site_search(obj) {
+    	var host = window.location.host;
+        obj.q.value = "site:" + host + " " + obj.ss_q.value;
+    }
+</script>
+
+<aside id="search-3" class="widget widget_search">
+	<form role="search" class="search-form" action="//www.google.com/search" method="get" onSubmit="site_search(this)">
+
+	<input name="q" type="hidden" />
+	    <label>
+	        <span class="screen-reader-text">Search for:</span>
+	        <input name="ss_q" type="text" placeholder="Search ..." class="search-field" />
+	    </label>
+	    <input type="submit" value="Search" class="search-submit" />
+	</form>
+</aside>
+
+        <aside id="profile-3" class="widget widget_profile">
+
+    <h1 class="widget-title">Profile</h1>
+    <div>
+        
+        <p>
+            kamichidu
+        </p>
+        <p>
+            <a href="https://github.com/kamichidu" target="_blank"><img src="https://kamichidu.github.io/logos/github-light-32px.png"></a>
+            <a href="https://twitter.com/kamichidu" target="_blank"><img src="https://kamichidu.github.io/logos/twitter.svg"></a>
+        </p>
+    </div>
+
+</aside>
+
+
+        <aside id="categories-3" class="widget widget_categories">
+	
+	<h1 class="widget-title">Categories</h1>
+
+	<ul>
+		
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/announcement/index.html">Announcement</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/article/index.html">Article</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/development/index.html">Development</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/notice/index.html">Notice</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/report/index.html">Report</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/research/index.html">Research</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/tips/index.html">Tips</a>
+		</li>
+
+		
+		
+		<li class="cat-item">
+			<a href="https://kamichidu.github.io/categories/vim/index.html">Vim</a>
+		</li>
+
+		
+
+	</ul>
+
+</aside>
+
+        <aside id="archives-3" class="widget widget_archives">
+
+    
+
+</aside>
+
+
+    </div>
+
+</div>
+
+</div>
+
+		</div>
+
+		<footer id="colophon" class="site-footer" role="contentinfo">
+
+			<div class="site-info">
+				<a href="http://gohugo.io">Proudly powered by Hugo</a>
+			</div>
+		</footer>
+	</div>
+
+	<script type='text/javascript' src='https://kamichidu.github.io/js/functions.js'></script>
+</body>
+</html>

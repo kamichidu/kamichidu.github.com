@@ -1,12 +1,270 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Article on なるはやで いい感じの 動作確認</title>
+    <title>なるはやで いい感じの 動作確認</title>
     <link>https://kamichidu.github.io/categories/article/index.xml</link>
-    <description>Recent content in Article on なるはやで いい感じの 動作確認</description>
+    <description>Recent content on なるはやで いい感じの 動作確認</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <atom:link href="https://kamichidu.github.io/categories/article/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>JSON Web Token（JWT）のClaimについて</title>
+      <link>https://kamichidu.github.io/post/2017/01/24-about-json-web-token/</link>
+      <pubDate>Tue, 24 Jan 2017 19:19:50 +0900</pubDate>
+      
+      <guid>https://kamichidu.github.io/post/2017/01/24-about-json-web-token/</guid>
+      <description>
+
+&lt;p&gt;REST APIなどを開発すると、避けては通れないものに認証があります。
+最近はOAuth2 Providerを実装することが多いのですが、発行するアクセストークンにJSON Web Token（JWT）を利用しています。
+JWTは名前の通り、&lt;a href=&#34;https://tools.ietf.org/html/rfc7519&#34;&gt;RFC7519&lt;/a&gt;によって定義されたスキーマを持つJSONです。
+JSONの各キーとして、RFCで定義されている標準的なキーと値のペア（Claim）を取ることにより、標準的な取り扱いが可能になります。&lt;/p&gt;
+
+&lt;p&gt;本記事では、JWTのClaimについて、OAuth2 Providerでのアクセストークンを発行する立場から、備忘録的にまとめたいと思います。&lt;/p&gt;
+
+&lt;p&gt;なお、JWTには&lt;a href=&#34;https://tools.ietf.org/html/rfc7519#section-5&#34;&gt;JOSE Header&lt;/a&gt;のような、Claimとは別の仕様も含まれていますが、本記事ではClaimのみを対象とします。&lt;/p&gt;
+
+&lt;h2 id=&#34;アクセストークンとしてjwtを利用することの利点&#34;&gt;アクセストークンとしてJWTを利用することの利点&lt;/h2&gt;
+
+&lt;p&gt;JWTは単なるJSONのため、アクセストークンとして用いることにより様々な情報を含めることができます。
+それにより、認証サーバとアプリケーションサーバを分割しているようなアーキテクチャであれば、認証サーバの負荷を軽減することに寄与します。
+&lt;a href=&#34;http://d.hatena.ne.jp/ritou/20140927/1411811648&#34;&gt;こちらの記事がよくまとまっており、わかりやすいです。&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;また、本記事の範囲からは離れますが、JWTと関連する&lt;a href=&#34;https://tools.ietf.org/html/rfc7516&#34;&gt;JSON Web Encryption（JWE）&lt;/a&gt;や
+&lt;a href=&#34;https://tools.ietf.org/html/rfc7515&#34;&gt;JSON Web Signature（JWS）&lt;/a&gt;などと併用することにより、
+規格化された方法のみで一般的なREST APIの認証で必要となる要件を満たすことができます。
+規格化されているため、技術者間の共通言語としても利用できますし、サービスごとに独自仕様を策定するという無駄な手間を省くことができます。&lt;/p&gt;
+
+&lt;h2 id=&#34;claimの種類&#34;&gt;Claimの種類&lt;/h2&gt;
+
+&lt;p&gt;JWTには、&lt;a href=&#34;https://tools.ietf.org/html/rfc7519#section-4&#34;&gt;3種類のClaimが定義されています。&lt;/a&gt;
+ここでは、それぞれのClaimについて簡単に説明します。&lt;/p&gt;
+
+&lt;h3 id=&#34;registered-claim-names&#34;&gt;Registered Claim Names&lt;/h3&gt;
+
+&lt;p&gt;IANAの&amp;rdquo;JSON Web Token Claims&amp;rdquo;に登録された、一般的な用途で利用されることを想定されたClaimです。
+基本的にこれらのClaimの利用は任意ですが、JWTを発行する際には可能な限り含めておいたほうが良いと思います。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&amp;ldquo;iss&amp;rdquo; (Issuer) (Optional)&lt;/p&gt;
+
+&lt;p&gt;JWTの発行者を意味します。
+値として文字列かURIを取ることができ、アプリケーション名やドメイン名が入ると思います。
+値は大文字/小文字を区別して扱われます。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&amp;ldquo;sub&amp;rdquo; (Subject) (Optional)&lt;/p&gt;
+
+&lt;p&gt;JWTの用途を意味します。
+値として文字列かURIを取ることができます。
+値は大文字/小文字が区別され、同じIssuer内でユニーク、または全世界でユニークである必要があります。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&amp;ldquo;aud&amp;rdquo; (Audience) (Optional)&lt;/p&gt;
+
+&lt;p&gt;JWTの想定利用者を意味します。
+値として文字列かURI、またはそれらの配列を取ることができます。
+値は大文字/小文字が区別されます。&lt;/p&gt;
+
+&lt;p&gt;発行する側はJWTの発行要求をしてきた相手を識別する文字列やURIを入れ込み、
+発行された側はAudience Claimが存在する場合は自分向けに発行されたJWTなのかどうかを検証することに用います。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&amp;ldquo;exp&amp;rdquo; (Expiration Time) (Optional)&lt;/p&gt;
+
+&lt;p&gt;JWTが失効する日時を意味します。
+値としては、数値表現された日付となります。（例: &amp;ldquo;12345&amp;rdquo;）&lt;/p&gt;
+
+&lt;p&gt;失効する日時を表すUNIX時刻などを入れるのが良いと思います。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&amp;ldquo;nbf&amp;rdquo; (Not Before) (Optional)&lt;/p&gt;
+
+&lt;p&gt;JWTが有効になる日時を意味します。
+取り得る値は&amp;rdquo;exp&amp;rdquo;と同様です。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&amp;ldquo;iat&amp;rdquo; (Issued At) (Optional)&lt;/p&gt;
+
+&lt;p&gt;JWTが発行された日時を意味します。
+取り得る値は&amp;rdquo;exp&amp;rdquo;や&amp;rdquo;nbf&amp;rdquo;と同様です。&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&amp;ldquo;jti&amp;rdquo; (JWT ID) (Optional)&lt;/p&gt;
+
+&lt;p&gt;JWTのユニーク性を担保するID値を意味します。
+&amp;ldquo;jti&amp;rdquo;が異なるJWTは、全く別のJWTとして扱われます。
+値は大文字/小文字が区別されます。&lt;/p&gt;
+
+&lt;p&gt;&amp;ldquo;jti&amp;rdquo;の存在は、同じJWTを使い回すことを抑制することを目的にしています。
+JWTの発行ごとに、UUIDでも入れておくのが良いのでしょうか。&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;public-claim-names&#34;&gt;Public Claim Names&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.iana.org/assignments/jwt/jwt.xhtml&#34;&gt;IANA &amp;ldquo;JSON Web Token Claims&amp;rdquo;&lt;/a&gt;に登録されているClaimを言います。
+Registered Claimは基本的にIANAに登録されており、Registered ClaimはPublic Claimのサブセットになっています。
+Public ClaimはIANAに登録されたClaimを言い、主に汎用的な用途のClaimを衝突する可能性を（仕様的な意味で）排除する目的で利用されます。&lt;/p&gt;
+
+&lt;p&gt;一般的なサービスを開発するとかいう場合には、恐らくこの種類のClaimを使うことはないでしょう。&lt;/p&gt;
+
+&lt;h3 id=&#34;private-claim-names&#34;&gt;Private Claim Names&lt;/h3&gt;
+
+&lt;p&gt;このClaimは、JWTのIssuerとAudienceの間で取り決めされた仕様に応じて何でも定義することができ、
+Private ClaimはRegistered ClaimやPublic Claimで予約された以外の名前を使うことができます。
+JWTをアクセストークンとして利用する場合は、大抵Private Claimにガシガシ値を突っ込んでいくことになります。&lt;/p&gt;
+
+&lt;p&gt;基本的にはどのような値も入れることはできますが、Claim名の衝突を避けるため、プレフィクスや企業のドメイン名をつけるなど工夫をしたほうが良いと思います。&lt;/p&gt;
+
+&lt;h2 id=&#34;アクセストークンの構築例&#34;&gt;アクセストークンの構築例&lt;/h2&gt;
+
+&lt;p&gt;ここでは今まで説明した内容を踏まえて、実際のアクセストークンがどのようになるかを説明します。&lt;/p&gt;
+
+&lt;h3 id=&#34;想定ケース&#34;&gt;想定ケース&lt;/h3&gt;
+
+&lt;p&gt;想定するサービスは、ログインユーザの情報として以下を持つとします。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;ユーザID&lt;/li&gt;
+&lt;li&gt;ユーザ名&lt;/li&gt;
+&lt;li&gt;メールアドレス&lt;/li&gt;
+&lt;li&gt;年齢&lt;/li&gt;
+&lt;li&gt;性別&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;また、サービスは当然独自のドメイン（example.com）を持っているものとし、
+認証系と機能系はそれぞれサブドメイン（idp.example.comとapi.example.com）で構成されているとします。&lt;/p&gt;
+
+&lt;h3 id=&#34;アクセストークン設計&#34;&gt;アクセストークン設計&lt;/h3&gt;
+
+&lt;p&gt;アクセストークンとしてJWTを発行するのは認証系であり、発行されたJWTを利用するのは機能系となります。
+場合によっては、認証系にはユーザ情報を検索する等の機能が含まれている場合もありますので、それも加味します。
+つまりJWTの発行者はidp.example.comとなり、想定利用者はapi.example.comおよびidp.example.comとなります。&lt;/p&gt;
+
+&lt;p&gt;発行するJWTの用途としては、アクセストークンです。
+セキュリティを考えて、発行から1時間で失効するのが良いでしょう。
+また、発行したJWTが有効になる時刻は、各サーバで時刻同期が仮にずれていた場合を考えて発行時刻の5秒前としましょう。&lt;/p&gt;
+
+&lt;p&gt;以上をまとめると、Registered ClaimのみでJWTを構成すると以下のようになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{
+  &amp;quot;jti&amp;quot;: &amp;quot;92f46647-90a2-4174-bca9-27d7f69a8fb7&amp;quot;,
+  &amp;quot;iss&amp;quot;: &amp;quot;https://idp.example.com/&amp;quot;,
+  &amp;quot;sub&amp;quot;: &amp;quot;AccessToken&amp;quot;,
+  &amp;quot;aud&amp;quot;: [
+    &amp;quot;https://api.example.com/&amp;quot;,
+    &amp;quot;https://idp.example.com/&amp;quot;
+  ],
+  &amp;quot;exp&amp;quot;: 1485320878,
+  &amp;quot;nbf&amp;quot;: 1485317273,
+  &amp;quot;iat&amp;quot;: 1485317278
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;続いてサービスに固有のClaimを考えます。
+Private Claimとして、ログインユーザの情報をすべて含めてしまいましょう。
+名前が衝突するのを防止するため、idp.example.comをプレフィクスとして構成することにし、
+ユーザ情報の各属性を、そのまま英語に直したものをサフィックスとしてしまいましょう。&lt;/p&gt;
+
+&lt;p&gt;例として以下のようなユーザ情報を考えます。
+（golangのstructで示します。）&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;user := &amp;amp;struct{
+	Id    string
+	Name  string
+	Email string
+	Age   int
+	Sex   string
+}{
+	Id:    &amp;quot;72f5fbcc-75bb-4393-b2dd-76e74ad0fd87&amp;quot;,
+	Name:  &amp;quot;pico jiro&amp;quot;,
+	Email: &amp;quot;picojiro@example.com&amp;quot;,
+	Age:   30,
+	Sex:   &amp;quot;male&amp;quot;,
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このユーザ情報からPrivate Claimを構成すると以下のようになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{
+  &amp;quot;https://idp.example.com/claim-types/user-id&amp;quot;: &amp;quot;72f5fbcc-75bb-4393-b2dd-76e74ad0fd87&amp;quot;,
+  &amp;quot;https://idp.example.com/claim-types/user-name&amp;quot;: &amp;quot;pico jiro&amp;quot;,
+  &amp;quot;https://idp.example.com/claim-types/user-email&amp;quot;: &amp;quot;picojiro@example.com&amp;quot;,
+  &amp;quot;https://idp.example.com/claim-types/user-age&amp;quot;: 30,
+  &amp;quot;https://idp.example.com/claim-types/user-sex&amp;quot;: &amp;quot;male&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Registered ClaimとPrivate Claimを合わせて、最終的に以下のようなJWTが得られました。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;{
+  &amp;quot;jti&amp;quot;: &amp;quot;37852e99-ab54-460c-92b2-18231d3ba823&amp;quot;,
+  &amp;quot;iss&amp;quot;: &amp;quot;https://idp.example.com/&amp;quot;,
+  &amp;quot;sub&amp;quot;: &amp;quot;AccessToken&amp;quot;,
+  &amp;quot;aud&amp;quot;: [
+    &amp;quot;https://api.example.com/&amp;quot;,
+    &amp;quot;https://idp.example.com/&amp;quot;
+  ],
+  &amp;quot;exp&amp;quot;: 1485322113,
+  &amp;quot;nbf&amp;quot;: 1485318508,
+  &amp;quot;iat&amp;quot;: 1485318513,
+  &amp;quot;https://idp.example.com/claim-types/user-id&amp;quot;: &amp;quot;72f5fbcc-75bb-4393-b2dd-76e74ad0fd87&amp;quot;,
+  &amp;quot;https://idp.example.com/claim-types/user-name&amp;quot;: &amp;quot;pico jiro&amp;quot;,
+  &amp;quot;https://idp.example.com/claim-types/user-email&amp;quot;: &amp;quot;picojiro@example.com&amp;quot;,
+  &amp;quot;https://idp.example.com/claim-types/user-age&amp;quot;: 30,
+  &amp;quot;https://idp.example.com/claim-types/user-sex&amp;quot;: &amp;quot;male&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;まとめ&#34;&gt;まとめ&lt;/h2&gt;
+
+&lt;p&gt;JWTのClaimについて、REST API等のアクセストークンに適用するという観点から仕様をまとめました。
+またアクセストークンを構築する例を通して、実際にアクセストークンとしてJWTを適用する方法について説明しました。&lt;/p&gt;
+
+&lt;p&gt;JWTはJWEやJWSと組み合わせて、セキュアなアクセストークンの仕組みを標準的な方法で構築することができるため、非常に有用だと思います。&lt;/p&gt;
+
+&lt;p&gt;今回アクセストークンの例を出力するために書いたgolangのコードを貼っておきますので、参考程度にどうぞ。
+なおJWTの確認には、&lt;a href=&#34;https://jwt.io&#34;&gt;jwt.io&lt;/a&gt;が便利です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;package main
+
+import (
+	&amp;quot;time&amp;quot;
+
+	&amp;quot;github.com/dgrijalva/jwt-go&amp;quot;
+	&amp;quot;github.com/satori/go.uuid&amp;quot;
+)
+
+func main() {
+	user := &amp;amp;struct {
+		Id    string
+		Name  string
+		Email string
+		Age   int
+		Sex   string
+	}{
+		Id:    &amp;quot;72f5fbcc-75bb-4393-b2dd-76e74ad0fd87&amp;quot;,
+		Name:  &amp;quot;pico jiro&amp;quot;,
+		Email: &amp;quot;picojiro@example.com&amp;quot;,
+		Age:   30,
+		Sex:   &amp;quot;male&amp;quot;,
+	}
+	now := time.Now()
+	token := jwt.NewWithClaims(jwt.SigningMethodNone, jwt.MapClaims{
+		&amp;quot;iss&amp;quot;: &amp;quot;https://idp.example.com/&amp;quot;,
+		&amp;quot;sub&amp;quot;: &amp;quot;AccessToken&amp;quot;,
+		&amp;quot;aud&amp;quot;: []string{&amp;quot;https://api.example.com/&amp;quot;, &amp;quot;https://idp.example.com/&amp;quot;},
+		&amp;quot;exp&amp;quot;: now.Add(1 * time.Hour).Unix(),
+		&amp;quot;nbf&amp;quot;: now.Add(-5 * time.Second).Unix(),
+		&amp;quot;iat&amp;quot;: now.Unix(),
+		&amp;quot;jti&amp;quot;: uuid.NewV4().String(),
+		&amp;quot;https://idp.example.com/claim-types/user-id&amp;quot;:    user.Id,
+		&amp;quot;https://idp.example.com/claim-types/user-name&amp;quot;:  user.Name,
+		&amp;quot;https://idp.example.com/claim-types/user-email&amp;quot;: user.Email,
+		&amp;quot;https://idp.example.com/claim-types/user-age&amp;quot;:   user.Age,
+		&amp;quot;https://idp.example.com/claim-types/user-sex&amp;quot;:   user.Sex,
+	})
+	s, _ := token.SigningString()
+	println(s)
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
     
     <item>
       <title>Vimをサーバとして稼動させる</title>

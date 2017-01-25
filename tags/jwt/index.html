@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width">
-    <title>unite-javaimportがメジャーバージョンアップしました &middot; なるはやで いい感じの 動作確認</title>
+    <title>なるはやで いい感じの 動作確認</title>
     <link rel="profile" href="https://gmpg.org/xfn/11">
     <!--[if lt IE 9]>
     <script src="https://kamichidu.github.io/js/html5.js"></script>
@@ -46,11 +46,10 @@ ga('send', 'pageview');
 
 
 <div id="main-content" class="main-content">
-
-	<div id="primary" class="content-area">
-		<div id="content" class="site-content" role="main">
-
-			<article class="post type-post status-publish format-standard hentry">
+    <div id="primary" class="content-area">
+        <div id="content" class="site-content" role="main">
+            
+                <article class="post type-post status-publish format-standard hentry">
 
     
     <header class="entry-header">
@@ -60,18 +59,18 @@ ga('send', 'pageview');
         <div class="entry-meta">
             <span class="cat-links">
                 
-                <a href="https://kamichidu.github.io/categories/announcement/index.html" rel="category">Announcement</a>
+                <a href="https://kamichidu.github.io/categories/article/index.html" rel="category">Article</a>
                 
             </span>
         </div>
 
-        <h1 class="entry-title">unite-javaimportがメジャーバージョンアップしました</h1>
+        <h1 class="entry-title"><a href="https://kamichidu.github.io/post/2017/01/24-about-json-web-token/">JSON Web Token（JWT）のClaimについて</a></h1>
 
         <div class="entry-meta">
             <span class="entry-date">
-                <a href="https://kamichidu.github.io/post/2014/10/19-release-note-for-unite-javaimport//index.html" rel="bookmark">
-                    <time class="entry-date" datetime="2014-10-19 00:00:00 &#43;0900 JST">
-                        2014 Oct 19
+                <a href="https://kamichidu.github.io/post/2017/01/24-about-json-web-token//index.html" rel="bookmark">
+                    <time class="entry-date" datetime="2017-01-24 19:19:50 &#43;0900 JST">
+                        2017 Jan 24
                     </time>
                 </a>
             </span>
@@ -80,95 +79,22 @@ ga('send', 'pageview');
     </header>
 
     <div class="entry-content">
-        <p>今までバージョン0.2.xだった<a href="https://github.com/kamichidu/vim-unite-javaimport">unite-javaimport</a>が、この度0.3.xになりました。
-内部構造が大幅に変更されているため、0.2.xと比べて</p>
-
-<ol>
-<li><p>メモリ使用量の削減</p>
-
-<p>0.2.xでは500M程使ってしまっていましたが、大きく改善されています。</p></li>
-
-<li><p>速度の向上</p>
-
-<p>0.2.xでは内部的にローカルサーバを立ち上げて、javaimportが起動されるごとに計算を行っていました。
-0.3.xでは主にキャッシュ周りのファイル構成を見直し、一度起動した後は主にキャッシュから候補を取得するため、速度が向上しました。</p></li>
-</ol>
-
-<p>以上の点が改善されています。</p>
-
-<p>また、新規機能の追加として、</p>
-
-<ol>
-<li><p>static import機能の追加</p>
-
-<p>以下のunite-sourceが追加されています。</p>
-
-<ol>
-<li><p>javaimport/field</p></li>
-
-<li><p>javaimport/method</p></li>
-</ol>
-
-<p>また同時に、javaimport/classのアクションにexpandが追加されています。
-javaimport/classで選択したクラスをjavaimport/fieldおよびjavaimport/methodに渡して起動することができます。</p></li>
-
-<li><p><a href="https://github.com/ctrlpvim/ctrlp.vim">ctrlp</a>をサポートしました</p>
-
-<p>以下のコマンドが追加されています。
-ただしhelpはまだないので、実験的なものとなります。</p>
-
-<ol>
-<li><p>CtrlPJavaImportClass</p></li>
-
-<li><p>CtrlPJavaImportField</p></li>
-
-<li><p>CtrlPJavaImportMethod</p></li>
-</ol></li>
-</ol>
-
-<p>以上の機能が追加されています。</p>
-
-<p>また今後の開発についてですが、unite-sourceを主として開発するのではなく、メインのUIを別に作成することを考えています。
-uniteのサポートは今後とも継続するつもりですが、あくまでjavaimportのサポートする1つのインタフェイスという位置付けになります。
-今回ctrlpのサポートを追加したのも、この変更に対する伏線の意図があります。
-なお、本格的な変更は次回のメジャーバージョンアップで行う予定です。</p>
-
-<p>不具合や要望があれば、<a href="https://github.com/kamichidu/vim-unite-javaimport/issues">githubのissues</a>までお願いいたします。</p>
-
+        REST APIなどを開発すると、避けては通れないものに認証があります。 最近はOAuth2 Providerを実装することが多いのですが、発行するアク...
     </div>
 
     <footer class="entry-meta">
-        <span class="tag-links">
+        <span class="tag-links">        
             
-                <a href="https://kamichidu.github.io/tags/vim/index.html" rel="tag">Vim</a>
-            
-                <a href="https://kamichidu.github.io/tags/java/index.html" rel="tag">Java</a>
+                <a href="https://kamichidu.github.io/tags/jwt/index.html" rel="tag">JWT</a>
             
         </span>
     </footer>
 </article> 
 
-
-			<div id="disqus_thread"></div>
-<script type="text/javascript">
-    var disqus_shortname = 'naruhaya';
-    var disqus_identifier = 'https:\/\/kamichidu.github.io\/post\/2014\/10\/19-release-note-for-unite-javaimport\/';
-    var disqus_title = 'unite-javaimportがメジャーバージョンアップしました';
-    var disqus_url = 'https:\/\/kamichidu.github.io\/post\/2014\/10\/19-release-note-for-unite-javaimport\/';
-
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-		
-		</div>
-
-	</div>
-	<div id="secondary">
+            
+        </div>
+    </div>
+    <div id="secondary">
 
     
 
@@ -272,6 +198,15 @@ uniteのサポートは今後とも継続するつもりですが、あくまで
 
         <aside id="archives-3" class="widget widget_archives">
 
+    
+    <h1 class="widget-title">Archives</h1>
+    <ul>
+        
+        <li class="cat-item">
+            <a href="https://kamichidu.github.io/post/2017/01/24-about-json-web-token/">JSON Web Token（JWT）のClaimについて</a>
+        </li>
+        
+    </ul>
     
 
 </aside>
