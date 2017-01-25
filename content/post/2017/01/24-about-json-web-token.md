@@ -34,8 +34,8 @@ JWTは単なるJSONのため、アクセストークンとして用いること�
 
 Claimの種類
 ------------------------------------------------------------------------------------------------------------------------
-JWTには、[3種類のClaim種別が定義されています。](https://tools.ietf.org/html/rfc7519#section-4)
-ここでは、それぞれのClaim種別について簡単に説明します。
+JWTには、[3種類のClaimが定義されています。](https://tools.ietf.org/html/rfc7519#section-4)
+ここでは、それぞれのClaimについて簡単に説明します。
 
 ### Registered Claim Names
 
@@ -96,7 +96,7 @@ IANAの"JSON Web Token Claims"に登録された、一般的な用途で利用�
 Registered Claimは基本的にIANAに登録されており、Registered ClaimはPublic Claimのサブセットになっています。
 Public ClaimはIANAに登録されたClaimを言い、主に汎用的な用途のClaimを衝突する可能性を（仕様的な意味で）排除する目的で利用されます。
 
-一般的なサービスを開発するとかいう場合には、恐らくこのClaim種別を使うことはないでしょう。
+一般的なサービスを開発するとかいう場合には、恐らくこの種類のClaimを使うことはないでしょう。
 
 
 ### Private Claim Names
@@ -112,7 +112,103 @@ JWTをアクセストークンとして利用する場合は、大抵Private Cla
 ------------------------------------------------------------------------------------------------------------------------
 ここでは今まで説明した内容を踏まえて、実際のアクセストークンがどのようになるかを説明します。
 
-TBD
+### 想定ケース
+
+想定するサービスは、ログインユーザの情報として以下を持つとします。
+
+1. ユーザID
+1. ユーザ名
+1. メールアドレス
+1. 年齢
+1. 性別
+
+また、サービスは当然独自のドメイン（example.com）を持っているものとし、
+認証系と機能系はそれぞれサブドメイン（idp.example.comとapi.example.com）で構成されているとします。
+
+### アクセストークン設計
+
+アクセストークンとしてJWTを発行するのは認証系であり、発行されたJWTを利用するのは機能系となります。
+場合によっては、認証系にはユーザ情報を検索する等の機能が含まれている場合もありますので、それも加味します。
+つまりJWTの発行者はidp.example.comとなり、想定利用者はapi.example.comおよびidp.example.comとなります。
+
+発行するJWTの用途としては、アクセストークンです。
+セキュリティを考えて、発行から1時間で失効するのが良いでしょう。
+また、発行したJWTが有効になる時刻は、各サーバで時刻同期が仮にずれていた場合を考えて発行時刻の5秒前としましょう。
+
+以上をまとめると、Registered ClaimのみでJWTを構成すると以下のようになります。
+
+```
+{
+  "jti": "92f46647-90a2-4174-bca9-27d7f69a8fb7",
+  "iss": "https://idp.example.com/",
+  "sub": "AccessToken",
+  "aud": [
+    "https://api.example.com/",
+    "https://idp.example.com/"
+  ],
+  "exp": 1485320878,
+  "nbf": 1485317273,
+  "iat": 1485317278
+}
+```
+
+続いてサービスに固有のClaimを考えます。
+Private Claimとして、ログインユーザの情報をすべて含めてしまいましょう。
+名前が衝突するのを防止するため、idp.example.comをプレフィクスとして構成することにし、
+ユーザ情報の各属性を、そのまま英語に直したものをサフィックスとしてしまいましょう。
+
+例として以下のようなユーザ情報を考えます。
+（golangのstructで示します。）
+
+```
+user := &struct{
+	Id    string
+	Name  string
+	Email string
+	Age   int
+	Sex   string
+}{
+	Id:    "72f5fbcc-75bb-4393-b2dd-76e74ad0fd87",
+	Name:  "pico jiro",
+	Email: "picojiro@example.com",
+	Age:   30,
+	Sex:   "male",
+}
+```
+
+このユーザ情報からPrivate Claimを構成すると以下のようになります。
+
+```
+{
+  "https://idp.example.com/claim-types/user-id": "72f5fbcc-75bb-4393-b2dd-76e74ad0fd87",
+  "https://idp.example.com/claim-types/user-name": "pico jiro",
+  "https://idp.example.com/claim-types/user-email": "picojiro@example.com",
+  "https://idp.example.com/claim-types/user-age": 30,
+  "https://idp.example.com/claim-types/user-sex": "male"
+}
+```
+
+Registered ClaimとPrivate Claimを合わせて、最終的に以下のようなJWTが得られました。
+
+```
+{
+  "jti": "37852e99-ab54-460c-92b2-18231d3ba823",
+  "iss": "https://idp.example.com/",
+  "sub": "AccessToken",
+  "aud": [
+    "https://api.example.com/",
+    "https://idp.example.com/"
+  ],
+  "exp": 1485322113,
+  "nbf": 1485318508,
+  "iat": 1485318513,
+  "https://idp.example.com/claim-types/user-id": "72f5fbcc-75bb-4393-b2dd-76e74ad0fd87",
+  "https://idp.example.com/claim-types/user-name": "pico jiro",
+  "https://idp.example.com/claim-types/user-email": "picojiro@example.com",
+  "https://idp.example.com/claim-types/user-age": 30,
+  "https://idp.example.com/claim-types/user-sex": "male"
+}
+```
 
 まとめ
 ------------------------------------------------------------------------------------------------------------------------
@@ -120,3 +216,50 @@ JWTのClaimについて、REST API等のアクセストークンに適用する�
 またアクセストークンを構築する例を通して、実際にアクセストークンとしてJWTを適用する方法について説明しました。
 
 JWTはJWEやJWSと組み合わせて、セキュアなアクセストークンの仕組みを標準的な方法で構築することができるため、非常に有用だと思います。
+
+今回アクセストークンの例を出力するために書いたgolangのコードを貼っておきますので、参考程度にどうぞ。
+なおJWTの確認には、[jwt.io](https://jwt.io)が便利です。
+
+```
+package main
+
+import (
+	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/satori/go.uuid"
+)
+
+func main() {
+	user := &struct {
+		Id    string
+		Name  string
+		Email string
+		Age   int
+		Sex   string
+	}{
+		Id:    "72f5fbcc-75bb-4393-b2dd-76e74ad0fd87",
+		Name:  "pico jiro",
+		Email: "picojiro@example.com",
+		Age:   30,
+		Sex:   "male",
+	}
+	now := time.Now()
+	token := jwt.NewWithClaims(jwt.SigningMethodNone, jwt.MapClaims{
+		"iss": "https://idp.example.com/",
+		"sub": "AccessToken",
+		"aud": []string{"https://api.example.com/", "https://idp.example.com/"},
+		"exp": now.Add(1 * time.Hour).Unix(),
+		"nbf": now.Add(-5 * time.Second).Unix(),
+		"iat": now.Unix(),
+		"jti": uuid.NewV4().String(),
+		"https://idp.example.com/claim-types/user-id":    user.Id,
+		"https://idp.example.com/claim-types/user-name":  user.Name,
+		"https://idp.example.com/claim-types/user-email": user.Email,
+		"https://idp.example.com/claim-types/user-age":   user.Age,
+		"https://idp.example.com/claim-types/user-sex":   user.Sex,
+	})
+	s, _ := token.SigningString()
+	println(s)
+}
+```
