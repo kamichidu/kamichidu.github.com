@@ -22,13 +22,26 @@ build:
           git submodule update --init --recursive
 
     - script:
+        name: setup build dir
+        code: |
+          git clone https://github.com/kamichidu/kamichidu.github.com public
+
+    - script:
         name: generate site
         code: |
           hugo
 
 deploy:
   steps:
-    - git-push:
-        gh_oauth: $GH_TOKEN
-        gh_pages: true
-        basedir: public
+    - script:
+        name: git config
+        code: |
+          git config user.name wercker
+
+    - script:
+        name: push site
+        code: |
+          cd public
+          git add .
+          git commit -m 'update'
+          git push origin master
