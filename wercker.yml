@@ -17,6 +17,11 @@ build:
           hugo version
 
     - script:
+        name: get submodules
+        code: |
+          git submodule update --init --recursive
+
+    - script:
         name: generate site
         code: |
           hugo
