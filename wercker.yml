@@ -1,0 +1,28 @@
+box: golang
+
+build:
+  steps:
+    - setup-go-workspace
+
+    - script:
+        name: go get
+        code: |
+          go get -v github.com/gohugoio/hugo
+
+    - script:
+        name: show version
+        code: |
+          go version
+          go env
+          hugo version
+
+    - script:
+        name: generate site
+        code: |
+          hugo
+
+deploy:
+  steps:
+    - git-push:
+        gh_pages: true
+        basedir: public
